@@ -1,0 +1,17 @@
+numpy
+onnxruntime
+espeak-phonemizer
+sounddevice
+pydub
+pandas
+tenacity
+fastapi
+httpx
+librosa
+openai
+vosk
+python-multipart
+uvicorn
+ffmpeg-python
+vllm==0.6.2
+huggingface_hub
