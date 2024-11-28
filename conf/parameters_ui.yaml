@@ -1,26 +1,27 @@
 model:
-  model_path: /models/Nemotron_instruct_corex5_mcq_70B_9900_safetesnors_old_torchtune_AWQ-4bit-g128-gemm
-  tokenizer: /models/Nemotron_instruct_corex5_mcq_70B_9900_safetesnors_old_torchtune_AWQ-4bit-g128-gemm
+  model_path: models/Nemotron_instruct_corex5_mcq_70B_9900_safetesnors_old_torchtune_AWQ-4bit-g128-gemm
+  tokenizer: models/Nemotron_instruct_corex5_mcq_70B_9900_safetesnors_old_torchtune_AWQ-4bit-g128-gemm
+  is_local: True
   port: 8003
   host: "0.0.0.0"
   seed: 0
 
 asr_model_paths:
-  kk: /models/asr_vosk/vosk_models/vosk-model-kz-0.15
-  en: /models/asr_vosk/vosk_models/vosk-model-en-us-0.22-lgraph
-  ru: /models/asr_vosk/vosk_models/vosk-model-small-ru-0.22
+  kk: models/asr_vosk/vosk_models/vosk-model-kz-0.15
+  en: models/asr_vosk/vosk_models/vosk-model-en-us-0.22-lgraph
+  ru: models/asr_vosk/vosk_models/vosk-model-small-ru-0.22
 
 tts_model_paths:
-    kk: /models/tts_piper/piper_models/voice-kk-issai-high/kk-issai-high.onnx
-    en: /models/tts_piper/piper_models/en-us-amy-low/en-us-amy-low.onnx
-    ru: /models/tts_piper/piper_models/ru-ruslan-medium/ru_ru_RU_ruslan_medium_ru_RU-ruslan-medium.onnx
+    kk: models/tts_piper/piper_models/voice-kk-issai-high/kk-issai-high.onnx
+    en: models/tts_piper/piper_models/en-us-amy-low/en-us-amy-low.onnx
+    ru: models/tts_piper/piper_models/ru-ruslan-medium/ru_ru_RU_ruslan_medium_ru_RU-ruslan-medium.onnx
 
 api:
   port: 8035
   host: "0.0.0.0"
 
 gpu:
-  cuda_visible_device: 6
+  cuda_visible_devices: 6
   gpu_memory_util: 0.9
   max_num_batch_tokens: 16384
   max_model_tokens: 16384
