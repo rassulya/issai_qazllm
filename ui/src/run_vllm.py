@@ -26,7 +26,11 @@ if __name__ == "__main__":
     
 # Model and environment settings from YAML file
     model_config = config["model"]
+    IS_LOCAL = model_config["is_local"]
     MODEL = model_config["model_path"]
+    if IS_LOCAL: 
+        print("LOCAL MODEL")
+        MODEL = Path(ROOT_DIR) / MODEL    
     TOKENIZER = model_config["tokenizer"]
     PORT = model_config["port"]
     HOST = model_config["host"]
@@ -65,7 +69,7 @@ if __name__ == "__main__":
 
     # Construct the vLLM command
     CMD = [
-        "vllm", "serve", MODEL,
+        "vllm", "serve", str(MODEL),
         "--host", HOST,
         "--port", str(PORT),
         "--gpu-memory-utilization", str(GPU_MEMORY_UTILIZATION),

@@ -34,9 +34,9 @@ def load_config():
 
 
 tts_model_paths = {
-    'kk': 'src/utils/tts_piper/piper_models/voice-kk-issai-high/kk-issai-high.onnx',
-    'en': 'src/utils/tts_piper/piper_models/en-us-amy-low/en-us-amy-low.onnx',
-    'ru': 'src/utils/tts_piper/piper_models/ru-ruslan-medium/ru_ru_RU_ruslan_medium_ru_RU-ruslan-medium.onnx'
+    'kk': 'models/tts_piper/piper_models/voice-kk-issai-high/kk-issai-high.onnx',
+    'en': 'models/tts_piper/piper_models/en-us-amy-low/en-us-amy-low.onnx',
+    'ru': 'models/tts_piper/piper_models/ru-ruslan-medium/ru_ru_RU_ruslan_medium_ru_RU-ruslan-medium.onnx'
 }
 
 tts_lock = asyncio.Lock()
@@ -45,9 +45,9 @@ def load_asr_models():
     global asr_models
 
     asr_model_paths = {
-        'kk': "src/utils/asr_vosk/vosk_models/vosk-model-kz-0.15",
-        'en': "src/utils/asr_vosk/vosk_models/vosk-model-en-us-0.22-lgraph",
-        'ru': "src/utils/asr_vosk/vosk_models/vosk-model-small-ru-0.22"   
+        'kk': "models/asr_vosk/vosk_models/vosk-model-kz-0.15",
+        'en': "models/asr_vosk/vosk_models/vosk-model-en-us-0.22-lgraph",
+        'ru': "models/asr_vosk/vosk_models/vosk-model-small-ru-0.22"   
     }
     for lang_code, model_path in asr_model_paths.items():
         if not os.path.exists(model_path):

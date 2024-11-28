@@ -39,11 +39,15 @@ def load_config():
 config = load_config()
 model_config = config["model"]
 model_path = model_config["model_path"]
+is_local = model_config["is_local"]
 model_port = model_config["port"]
 api = config["api"]
 api_port = api["port"]
 api_host = api["host"]
-# Configure logging
+
+if is_local:
+    model_path = str(Path(ROOT_DIR) / model_path)
+    # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -66,7 +70,7 @@ static_dir = os.path.join(os.path.dirname(__file__), "static")
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # Configuration variables
-VLLM_URL = os.getenv(f"VLLM_URL", "http://localhost:{model_port}/v1")
+VLLM_URL = os.getenv("VLLM_URL", f"http://localhost:{model_port}/v1")
 MODEL_PATH = os.getenv("MODEL_PATH", model_path)
 
 SYSTEM_PROMPT = "You are a highly capable AI assistant. Respons in the language of the user query."
