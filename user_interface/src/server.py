@@ -6,12 +6,11 @@ from fastapi.responses import FileResponse, StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List
 import os
 import httpx
 import logging
 import json
-import io
 import base64
 import numpy as np
 import librosa
@@ -21,6 +20,29 @@ from openai import OpenAI
 # Import speech_utils functions
 from utils.speech_utils import transcribe_audio, toggle_tts, is_tts_enabled, text_to_speech, tts_stream, set_language
 
+from pathlib import Path
+import yaml  # Assuming you need to parse YAML
+
+# Get the root directory of the project
+ROOT_DIR = Path(os.getenv("PROJECT_ROOT", "."))
+
+# Path to the configuration file
+CONFIG_PATH = ROOT_DIR / "conf" / "parameters_ui.yaml"
+
+
+# Load the configuration
+def load_config():
+    with open(CONFIG_PATH, "r") as file:
+        config = yaml.safe_load(file)
+    return config
+
+config = load_config()
+model_config = config["model"]
+model_path = model_config["model_path"]
+model_port = model_config["port"]
+api = config["api"]
+api_port = api["port"]
+api_host = api["host"]
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -37,13 +59,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
 # Serve static files
 static_dir = os.path.join(os.path.dirname(__file__), "static")
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # Configuration variables
-VLLM_URL = os.getenv("VLLM_URL", "http://localhost:8003/v1")
-MODEL_PATH = os.getenv("MODEL_PATH", "/home/rasul_yermagambet/projects/qazllm/models/Nemotron_instruct_corex5_mcq_70B_9900_safetesnors_old_torchtune_AWQ-4bit-g128-gemm")
+VLLM_URL = os.getenv(f"VLLM_URL", "http://localhost:{model_port}/v1")
+MODEL_PATH = os.getenv("MODEL_PATH", model_path)
 
 SYSTEM_PROMPT = "You are a highly capable AI assistant. Respons in the language of the user query."
 
@@ -276,4 +300,4 @@ async def chat_completions(request: Request, image: UploadFile = File(None), que
 if __name__ == "__main__":
     import uvicorn
     logger.info("Starting ASR_TTS server...")
-    uvicorn.run(app, host="0.0.0.0", port=8035) 
+    uvicorn.run(app, host=api_host, port=api_port) 

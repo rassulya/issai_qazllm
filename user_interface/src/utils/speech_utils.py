@@ -8,6 +8,8 @@ import numpy as np
 from vosk import Model, KaldiRecognizer
 from utils.tts_piper.TTS import TTS
 import asyncio
+from pathlib import Path
+import yaml
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -17,6 +19,19 @@ asr_models = {}
 tts_models = {}
 current_language = 'kk'  # default language
 tts_enabled = False
+
+ROOT_DIR = Path(os.getenv("PROJECT_ROOT", "."))
+
+# Path to the configuration file
+CONFIG_PATH = ROOT_DIR / "conf" / "parameters_ui.yaml"
+
+# Load the configuration
+def load_config():
+    with open(CONFIG_PATH, "r") as file:
+        config = yaml.safe_load(file)
+    return config
+
+
 
 tts_model_paths = {
     'kk': 'src/utils/tts_piper/piper_models/voice-kk-issai-high/kk-issai-high.onnx',
