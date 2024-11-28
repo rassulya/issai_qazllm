@@ -103,6 +103,7 @@ celerybeat.pid
 .env
 .venv
 env/
+envs/
 venv/
 ENV/
 env.bak/
@@ -134,3 +135,6 @@ dmypy.json
 cython_debug/
 
 *models*
+data
+
+credentials*
