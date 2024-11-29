@@ -6,9 +6,9 @@ pydub
 pandas
 tenacity
 fastapi
-httpx
+httpx==0.27.2
 librosa
-openai
+openai==1.55.3  
 vosk
 python-multipart
 uvicorn

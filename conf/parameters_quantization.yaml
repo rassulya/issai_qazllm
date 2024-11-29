@@ -1,0 +1,18 @@
+environment:
+  cuda_visible_devices: "0,1,2,3"  # Ensure only GPUs 4-7 are used
+
+model:
+  path: "models/Nemotron_instruct_corex5_mcq_70B_9900_safetesnors_old_torchtune"
+
+quant_config:
+  zero_point: True
+  q_group_size: 128
+  w_bit: 4
+  version: "GEMM"
+
+resources:
+  max_memory:
+    0: "35GB"
+    1: "36GB"
+    2: "36GB"
+    3: "36GB"

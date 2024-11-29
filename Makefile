@@ -13,7 +13,7 @@ UI_MODELS = utils/download_models.py
 
 # Targets
 .PHONY: export_env_vars create_model_env install_model_requirements \
-		create_ui_env install_ui_requirements run_ui_server run_vllm_server download_ui_models 
+		deploy_ui create_ui_env install_ui_requirements run_ui_server run_vllm_server download_ui_models 
 
 export_env_vars:
 	@echo "export PROJECT_ROOT=$(PROJECT_ROOT)" 
@@ -45,12 +45,8 @@ create_ui_env:
 		echo "Virtual environment $(ENV_NAME_UI) already exists."; \
 	fi
 
-# Install requirements and export environment variables
-install_ui_requirements: 
-	@. $(ENV_NAME_UI)/bin/activate && pip install -r $(REQUIREMENTS_FILE_UI)
-	@echo "Requirements installed."
-
-
+####UI
+deploy_ui: export_env_vars create_ui_env install_ui_requirements download_ui_models run_ui_server run_vllm_server
 # Create the Python virtual environment
 create_ui_env:
 	@if [ ! -d $(ENV_NAME_UI) ]; then \
@@ -68,10 +64,10 @@ install_ui_requirements:
 download_ui_models:
 	@. $(ENV_NAME_UI)/bin/activate && python $(UI_MODELS)
 
-run_ui_server: export_env_vars create_ui_env install_ui_requirements
+run_ui_server: 
 	@. $(ENV_NAME_UI)/bin/activate && python $(UI_SERVER)
 
-run_vllm_server: export_env_vars create_ui_env install_ui_requirements
+run_vllm_server: 
 	@. $(ENV_NAME_UI)/bin/activate && python $(VLLM_SERVER)
 
 
