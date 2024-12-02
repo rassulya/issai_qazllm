@@ -2,115 +2,105 @@
 <html lang="kk">
 <head>
     <meta charset="UTF-8">
-    <title>Barysgen</title>
+    <title>ISSAI KazLLM</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/static/styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.4/purify.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <!-- Markdown parser -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.4/purify.min.js"></script> <!-- Sanitizes HTML -->
 </head>
 <body>
     <div class="container">
         <main class="chat-area">
-            <div id="chat-container"></div>
+            <div id="chat-container"></div> <!-- Dynamic chat messages -->
             <div id="metadata"></div>
             <form id="message-form">
                 <div class="input-container">
                     <button type="button" id="clear-chat" class="action-button" title="Чатты тазалау">
-                        <i class="fas fa-trash-alt"></i>
+                        <i class="fas fa-trash-alt"></i> <!-- Clear chat button -->
                     </button>
-                    <div id="image-preview-container" style="display: none;">
-                        <img id="image-preview" src="" alt="Preview" style="max-width: 100px; max-height: 100px;">
-                        <button type="button" id="remove-image" class="action-button small-button">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
                     <textarea id="user-input" placeholder="Хабарламаңызды осында теріңіз..." rows="1"></textarea>
                     <div class="button-group">
                         <button type="button" id="record-button" class="action-button small-button" title="Дыбыс жазу">
-                            <i class="fas fa-microphone"></i>
+                            <i class="fas fa-microphone"></i> <!-- Voice recording -->
                         </button>
                         <button type="button" id="toggle-tts" class="action-button small-button" title="TTS ауыстыру">
-                            <i class="fas fa-volume-up"></i>
-                        </button>
-                        <button type="button" id="upload-image" class="action-button small-button" title="Сурет жүктеу">
-                            <i class="fas fa-image"></i>
+                            <i class="fas fa-volume-up"></i> <!-- Text-to-speech toggle -->
                         </button>
                         <button type="submit" id="send-button" class="action-button" title="Жіберу">
-                            <i class="fas fa-paper-plane"></i>
+                            <i class="fas fa-paper-plane"></i> <!-- Send message -->
                         </button>
                     </div>
                 </div>
             </form>
-            <input type="file" id="image-input" accept="image/*" style="display: none;">
         </main>
         <aside class="sidebar">
             <div class="sidebar-content">
-                <h1>ISSAI KAZLLM (70B_4bit_sft_ci4_11700)</h1>
+                <h1>ISSAI KazLLM</h1>
                 <div class="logo-container">
-                    <img src="/static/issai_logo.png" alt="ISSAI Logo" id="logo1">
-                    <img src="/static/made_in_kazakhstan.png" alt="Made in Kazakhstan" id="logo2">
+                    <img src="/static/images/issai_logo.png" alt="ISSAI Logo" id="logo1">
+                    <img src="/static/images/made_in_kazakhstan.png" alt="Made in Kazakhstan" id="logo2">
                 </div>
                 <div class="sidebar-spacer"></div>
                 <div class="button-container">
                     <button id="toggle-settings" class="sidebar-button">
                         <i class="fas fa-cog"></i> <span class="button-text" data-translate="Параметрлер">Параметрлер</span>
-                    </button>
+                    </button> <!-- Opens settings menu -->
                     <button id="lang-kk" class="sidebar-button lang-button" data-lang="kk">
                         <i class="fas fa-language"></i> <span class="button-text">Қазақша</span>
-                    </button>
+                    </button> <!-- Switch to Kazakh language -->
                     <button id="lang-ru" class="sidebar-button lang-button" data-lang="ru">
                         <i class="fas fa-language"></i> <span class="button-text">Русский</span>
-                    </button>
+                    </button> <!-- Switch to Russian language -->
                     <button id="lang-en" class="sidebar-button lang-button" data-lang="en">
                         <i class="fas fa-language"></i> <span class="button-text">English</span>
-                    </button>
+                    </button> <!-- Switch to English language -->
                 </div>
             </div>
         </aside>
     </div>
     
-    <!-- Pop-up меню для настроек -->
     <div id="settings-popup" class="popup">
         <div class="popup-content">
-            <button class="close-button" id="close-settings">&times;</button>
+            <button class="close-button" id="close-settings">&times;</button> <!-- Close settings popup -->
             <h2 data-translate="Параметрлер">Параметрлер</h2>
             <div class="setting">
                 <label for="system-prompt" data-translate="Жүйелік нұсқау:">Жүйелік нұсқау:</label>
                 <textarea id="system-prompt" rows="4">Сіз өте қабілетті AI көмекшісісіз. Жауаптар мысалдарсыз қысқа және қысқа болуы керек. Сұрақ қойылған тілде жауап беріңіз.</textarea>
-            </div>
+            </div> <!-- AI system prompt configuration -->
             <div class="setting">
                 <label for="database-select" data-translate="Рөлі:">Рөлі:</label>
                 <select id="database-select">
                     <option value="">Helpful AI Assistant</option>
                     <option value="nu_regulation">nu_regulation</option>
                     <option value="recent_crawled">recent_crawled</option>
-                </select>
+                </select> <!-- AI roles/options -->
             </div>
             <div class="setting">
                 <label for="temperature" data-translate="Температура">Температура: <span id="temperature-value">0.6</span></label>
-                <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.6">
+                <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.6"> <!-- Controls response randomness -->
             </div>
             <div class="setting">
                 <label for="max-tokens" data-translate="Макс токендер:">Макс токендер: <span id="max-tokens-value">512</span></label>
-                <input type="range" id="max-tokens" min="1" max="2000" step="1" value="512">
+                <input type="range" id="max-tokens" min="1" max="2000" step="1" value="512"> <!-- Maximum response length -->
             </div>
             <div class="setting">
                 <label for="top-k" data-translate="Жоғарғы K:">Жоғарғы K: <span id="top-k-value">5</span></label>
-                <input type="range" id="top-k" min="-1" max="100" step="1" value="5">
+                <input type="range" id="top-k" min="-1" max="100" step="1" value="5"> <!-- Controls sampling diversity -->
             </div>
             <div class="setting">
                 <label for="best-of">Ең жақсысы: <span id="best-of-value">1</span></label>
-                <input type="range" id="best-of" min="1" max="10" step="1" value="1">
+                <input type="range" id="best-of" min="1" max="10" step="1" value="1"> <!-- Controls best response out of n samples -->
             </div>
             <div class="setting">
                 <label for="repetition-penalty">Қайталау айыппұлы: <span id="repetition-penalty-value">1.0</span></label>
-                <input type="range" id="repetition-penalty" min="1.0" max="10.0" step="0.1" value="1.0">
+                <input type="range" id="repetition-penalty" min="1.0" max="10.0" step="0.1" value="1.0"> <!-- Penalizes repetition -->
             </div>
         </div>
     </div>
     
-    <script type="module" src="/static/script.js"></script>
-    <script type="module" src="/static/speech_utils.js"></script>
+    <script type="module" src="/static/script.js"></script> <!-- Main script -->
+    <script type="module" src="/static/speech_utils.js"></script> <!-- Speech utilities -->
 </body>
 </html>
