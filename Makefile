@@ -3,6 +3,7 @@ ENV_NAME_MODEL = envs/qazllm_model_env
 REQUIREMENTS_FILE_MODEL = requirements.txt
 BENCHMARK_V1 = src/benchmarking/llm_bench_version1/main.py
 BENCHMARK_V2 = src/benchmarking/llm_bench_version2/main.py
+MODEL_IMAGE_TAG=issai_qazllm:latest
 
 # Variables
 ENV_NAME_UI = envs/qazllm_ui_env
@@ -11,9 +12,44 @@ UI_SERVER = ui/src/server.py
 VLLM_SERVER = ui/src/run_vllm.py
 UI_MODELS = utils/download_models.py
 
+
+
+
+# Define the image name/tag
+
+
+
 # Targets
 .PHONY: export_env_vars create_model_env install_model_requirements \
-		deploy_ui create_ui_env install_ui_requirements run_ui_server run_vllm_server download_ui_models 
+		deploy_ui create_ui_env install_ui_requirements run_ui_server run_vllm_server download_ui_models \
+		model_docker_build model_docker_run model_docker_run_default model_docker_tag model_docker_down \
+		install_nvidia_docker
+
+# Target to install NVIDIA Docker
+install_nvidia_docker:
+	./install_nvidia_docker.sh
+
+# Build the Docker image
+model_docker_build:
+	docker-compose build
+
+# Run the Docker container with a custom command
+model_docker_run:
+	@echo "Running with command: $(COMMAND)"
+	COMMAND=$(COMMAND) docker-compose up
+
+# Run the Docker container with the default command
+model_docker_run_default:
+	@echo "Running with default command"
+	COMMAND="torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat --english --bf16" docker-compose up
+
+# Tag the image (optional, if you want to re-tag manually)
+model_docker_tag:
+	docker tag my-cogvlm-image:latest $(IMAGE_TAG)
+
+# Bring down any running containers
+model_docker_down:
+	docker-compose down
 
 export_env_vars:
 	@echo "export PROJECT_ROOT=$(PROJECT_ROOT)" 
