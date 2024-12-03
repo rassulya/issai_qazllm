@@ -35,8 +35,8 @@ model_docker_build:
 
 # Run the Docker container with a custom command
 model_docker_run:
-	@echo "Running with command: $(COMMAND)"
-	COMMAND=$(COMMAND) docker-compose up
+	@echo "Running $(DIR)"
+	@DIR=$(DIR) docker-compose up --build
 
 # Run the Docker container with the default command
 model_docker_run_default:

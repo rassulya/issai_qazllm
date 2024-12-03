@@ -3,17 +3,18 @@ services:
   issai_qazllm:
     build:
       context: .
-      dockerfile: Dockerfile  # Path to your Dockerfile
-    image: issai_qazllm:latest  # Specify the custom tag here
-    runtime: nvidia  # Use the NVIDIA runtime for GPU support
+      dockerfile: Dockerfile
+    image: issai_qazllm:latest
+    runtime: nvidia
     environment:
-      - NVIDIA_VISIBLE_DEVICES=all  # Use all available GPUs, adjust as necessary (e.g., '0' for the first GPU)
-      - COMMAND=${COMMAND}  # Pass the COMMAND environment variable into the container
+      - NVIDIA_VISIBLE_DEVICES=all
+      - COMMAND=${COMMAND}  # Pass the COMMAND as an environment variable
     volumes:
-      - ${PWD}:/issai_qazllm 
+      - ${PWD}:/issai_qazllm
     ports:
-      - "3434:3434"  # Expose the Gradio interface port (if needed)
+      - "3434:3434"
     devices:
-      - "/dev/nvidia0:/dev/nvidia0"  # Expose the first GPU device, add more devices if necessary
-      - "/dev/nvidia1:/dev/nvidia1"  # Expose second GPU device (for multi-GPU setups)
-    command: ["bash", "-c", "$COMMAND"]  # Use the passed command from the environment variable
+      - "/dev/nvidia0:/dev/nvidia0"
+      - "/dev/nvidia1:/dev/nvidia1"
+    # entrypoint: ["bash", "-c", "source /opt/venv/bin/activate && exec \"$COMMAND\""]  # Ensure virtualenv is activated
+    command: /bin/sh -c 'python3 $DIR'

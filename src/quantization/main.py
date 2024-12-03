@@ -28,7 +28,7 @@ model_path = config["model"]["path"]
 quant_config = config["quant_config"]
 max_memory = config["resources"]["max_memory"]
 # Set environment variable to use specific GPUs
-os.environ['CUDA_VISIBLE_DEVICES'] = env_config  # Ensure only GPUs 4-7 are used
+os.environ['CUDA_VISIBLE_DEVICES'] = cuda_visible_devices  # Ensure only GPUs 4-7 are used
 
 
 
