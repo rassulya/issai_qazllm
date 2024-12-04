@@ -13,8 +13,6 @@ import logging
 from typing import List, Dict
 from evaluate import load
 import torch
-from pathlib import Path
-
 
 os.environ["HF_ALLOW_CODE_EVAL"] = "1"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -26,115 +24,6 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
-
-def get_mcq_examples(benchmark: str, lang: str) -> str:
-    examples = {
-        'mmlu': {
-            'en': """Question: Who was the first emperor of Rome? 
-Options: A) Julius Caesar B) Augustus C) Nero D) Tiberius 
-Answer: B
-
-==================================================
-
-Question: What is the unit of electric resistance? 
-Options: A) Volt B) Ampere C) Ohm D) Joule 
-Answer: C
-
-==================================================
-
-Question: What is the derivative of f(x)=x2 with respect to x? 
-Options: A) x B) 2x C) x^2 D) 2x^2 
-Answer: B
-
-==================================================""",
-            'kk': """Сұрақ: Римнің алғашқы императоры кім болды? 
-Нұсқалар: A) Юлий Цезарь B) Август C) Нерон D) Тиберий 
-Жауап: B
-
-==================================================
-
-Сұрақ: Электр кедергісінің өлшем бірлігі қандай? 
-Нұсқалар: A) Вольт B) Ампер C) Ом D) Джоуль 
-Жауап: C
-
-==================================================
-
-Сұрақ: f(x)=x2 функциясының x-ке қатысты туындысы қандай? 
-Нұсқалар: A) x B) 2x C) x^2 D) 2x^2 
-Жауап: B
-
-==================================================""",
-            'ru': """Вопрос: Кто был первым императором Рима? 
-Варианты: A) Юлий Цезарь B) Август C) Нерон D) Тиберий 
-Ответ: B
-
-==================================================
-
-Вопрос: Какова единица измерения электрического сопротивления? 
-Варианты: A) Вольт B) Ампер C) Ом D) Джоуль 
-Ответ: C
-
-==================================================
-
-Вопрос: Какова производная функции f(x)=x2 относительно x? 
-Варианты: A) x B) 2x C) x^2 D) 2x^2 
-Ответ: B
-
-=================================================="""},
-        'arc': {
-            'en': """Question: What causes the phases of the moon?
-Options: A: the Earth's rotation B: the moon's distance from Earth C: the moon's position relative to the Earth and Sun D: clouds blocking parts of the moon
-Answer: C
-
-==================================================
-
-Question: A metal spoon gets warmer when placed in hot soup because of which process?
-Options: A: radiation B: convection C: conduction D: insulation
-Answer: C
-
-==================================================
-
-Question: What is the main function of the human heart?
-Options: A: to digest food B: to pump blood throughout the body C: to store oxygen D: to create red blood cells
-Answer: B
-
-==================================================""",
-            'kk': """Сұрақ: Айдың фазаларына не себеп болады?
-Нұсқалар: A: Жердің айналуы B: Айдың Жерден қашықтығы C: Айдың Жер мен Күнге қатысты орналасуы D: бұлттардың айды жартылай жабуы
-Жауап: C
-
-==================================================
-
-Сұрақ: Металл қасық ыстық сорпаға салынғанда қандай процестің арқасында жылынады?
-Нұсқалар: A: сәулелену B: конвекция C: жылу өткізгіштік D: оқшаулау
-Жауап: C
-
-==================================================
-
-Сұрақ: Адам жүрегінің негізгі функциясы қандай?
-Нұсқалар: A: тамақты қорыту B: қанды бүкіл денеге айдау C: оттегіні сақтау D: қызыл қан түйіршіктерін жасау
-Жауап: B
-
-==================================================""",
-            'ru': """Вопрос: Что вызывает фазы луны?
-Варианты: A: вращение Земли B: расстояние от Луны до Земли C: положение Луны относительно Земли и Солнца D: облака, закрывающие части луны
-Ответ: C
-
-==================================================
-
-Вопрос: Металлическая ложка нагревается в горячем супе благодаря какому процессу?
-Варианты: A: излучение B: конвекция C: теплопроводность D: изоляция
-Ответ: C
-
-==================================================
-
-Вопрос: Какова основная функция человеческого сердца?
-Варианты: A: переваривать пищу B: перекачивать кровь по всему телу C: хранить кислород D: создавать красные кровяные тельца
-Ответ: B
-
-=================================================="""}
-    }
-    return examples[benchmark][lang]
 
 def get_math_examples(lang: str) -> str:
     math_examples = {
@@ -239,117 +128,6 @@ Exact Answer: 65,960
 =================================================="""}
     return math_examples[lang]
 
-# Add these functions after the imports and before the other functions
-
-def get_one_shot_example_en():
-    return """Question: def median(l: list):
-    \"\"\"Return median of elements in the list l.
-    >>> median([3, 1, 2, 4, 5])
-    3
-    >>> median([-10, 4, 6, 1000, 10, 20])
-    15.0
-    \"\"\"
-
-Answer:
-Your code should be inside these symbols:
-```
-def median(l: list):
-    l = sorted(l)
-    if len(l) % 2 == 1:
-        return l[len(l) // 2]
-    else:
-        return (l[len(l) // 2 - 1] + l[len(l) // 2]) / 2.0
-```
-=================================================="""
-
-def get_one_shot_example_kk():
-    return """Сұрақ: def median(l: list):
-    \"\"\"Тізімдегі элементтердің медианасын қайтарады.
-    >>> median([3, 1, 2, 4, 5])
-    3
-    >>> median([-10, 4, 6, 1000, 10, 20])
-    15.0
-    \"\"\"
-
-Жауап:
-Сіздің кодыңыз осы таңбалардың ішінде болуы керек:
-```
-def median(l: list):
-    l = sorted(l)
-    if len(l) % 2 == 1:
-        return l[len(l) // 2]
-    else:
-        return (l[len(l) // 2 - 1] + l[len(l) // 2]) / 2.0
-```
-=================================================="""
-
-def get_one_shot_example_ru():
-    return """Вопрос: def median(l: list):
-    \"\"\"Возвращает медиану элементов в списке.
-    >>> median([3, 1, 2, 4, 5])
-    3
-    >>> median([-10, 4, 6, 1000, 10, 20])
-    15.0
-    \"\"\"
-
-Ответ:
-Ваш код должен быть внутри этих символов:
-```
-def median(l: list):
-    l = sorted(l)
-    if len(l) % 2 == 1:
-        return l[len(l) // 2]
-    else:
-        return (l[len(l) // 2 - 1] + l[len(l) // 2]) / 2.0
-```
-=================================================="""
-
-# Rename the old create_humaneval_prompt to create_humaneval_prompt_old
-
-# Add your new humaneval_prompt function
-def create_humaneval_prompt(row: Dict, lang: str = 'en') -> str:
-    # Main instruction in English
-    main_instruction = "You are my intelligent coding assistant."
-    
-    # Language-specific components
-    examples = {
-        'en': get_one_shot_example_en(),
-        'kk': get_one_shot_example_kk(),
-        'ru': get_one_shot_example_ru()
-    }
-    
-    question_prefix = {
-        'en': "You have this Python function:",
-        'kk': "Сізде мынадай Python функциясы бар:",
-        'ru': "У вас есть такая функция Python:"
-    }
-    
-    code_instruction = {
-        'en': "Your code should be inside these symbols: ```\nGive me the code without any explanation and extra symbols.",
-        'kk': "Сіздің кодыңыз осы таңбалардың ішінде болуы керек: ```\nМаған кодты қосымша түсініктемелер мен таңбаларсыз беріңіз.",
-        'ru': "Ваш код должен быть внутри этих символов: ```\nДайте мне код без объяснений и дополнительных символов."
-    }
-    
-    answer_label = {
-        'en': "Answer:",
-        'kk': "Жауап:",
-        'ru': "Ответ:"
-    }
-    
-    prompt = f"""{main_instruction}
-
-Here is an example problem and its solution:
-
-{examples[lang]}
-
-{question_prefix[lang]}
-
-{row['prompt']}
-
-{code_instruction[lang]}
-{answer_label[lang]} """
-    return prompt
-
 def extract_code_from_markdown(text: str) -> str:
     """Extract code from between ``` markers and clean it up."""
     pattern = r"```(?:python\n|\n)?(.+?)```"
@@ -379,37 +157,6 @@ You have this Python function:
 
 Finish this function.
 Give me the code without any explanation and extra symbols."""
-
-def create_mcq_prompt_old(row: Dict, benchmark: str, lang: str) -> str:
-    separator = ': ' if benchmark == 'arc' else ') '
-    
-    prompts = {
-        'en': {
-            'question': 'Question',
-            'options': 'Options',
-            'answer': 'Answer'
-        },
-        'kk': {
-            'question': 'Сұрақ',
-            'options': 'Нұсқалар',
-            'answer': 'Жауап'
-        },
-        'ru': {
-            'question': 'Вопрос',
-            'options': 'Варианты',
-            'answer': 'Ответ'
-        }
-    }
-
-    return f"""You are an intelligent AI assistant specialized in answering multiple choice questions. For each question, you will be given four options (A, B, C, D). Your task is to analyze the question and options carefully, then provide only the letter of the correct answer.
-
-Here are some example problems and their solutions:
-
-{get_mcq_examples(benchmark, lang)}
-
-{prompts[lang]['question']}: {row['question']}
-{prompts[lang]['options']}: A{separator}{row['A']} B{separator}{row['B']} C{separator}{row['C']} D{separator}{row['D']}
-{prompts[lang]['answer']}:"""
 
 def create_mcq_prompt(row: Dict, benchmark: str, lang: str) -> str:
     """Create zero-shot MCQ prompt for ARC and MMLU"""
@@ -654,33 +401,6 @@ def extract_math_answer(text: str, lang: str = 'en') -> str:
         logging.error(f"Error extracting math answer: {e}")
         return text
 
-# def extract_math_answer(text: str, lang: str = 'en') -> str:
-#     text = str(text).strip()
-    
-#     markers = {
-#         'en': 'Exact Answer:',
-#         'kk': 'Нақты жауап:',
-#         'ru': 'Точный ответ:'
-#     }
-    
-#     marker = markers.get(lang, markers['en'])
-    
-#     try:
-#         if marker in text:
-#             after_marker = text.split(marker, 1)[1].strip()
-#             numbers = re.findall(r'[-+]?\d*\.?\d+', after_marker)
-#             if numbers:
-#                 return numbers[0]
-        
-#         numbers = re.findall(r'[-+]?\d*\.?\d+', text)
-#         if numbers:
-#             return numbers[0]
-        
-#         return text
-#     except Exception as e:
-#         logging.error(f"Error extracting math answer: {e}")
-#         return text
-
 def evaluate_drop_answer(result: str, answers: List, lang: str = 'en') -> int:
     result_str = str(result).strip()
     
@@ -834,13 +554,6 @@ def load_dataset(file_path: str, data_portion: int = 100) -> List[Dict]:
     try:
         df = pd.read_csv(file_path, encoding='utf-8')
         
-        if 'answer' in df.columns:  # For MCQ datasets
-            df['answer'] = df['answer'].astype(str).str.strip().str.upper()
-            invalid_answers = df[~df['answer'].isin(['A', 'B', 'C', 'D'])]
-            if not invalid_answers.empty:
-                logging.warning(f"Invalid answers found in {file_path}:")
-                logging.warning(invalid_answers)
-        
         data = df.to_dict('records')
         
         if data_portion < 100:
@@ -982,10 +695,10 @@ def calculate_pass_at_k(df: pd.DataFrame, df_generated: pd.DataFrame) -> float:
 
     return np.mean(pass_k)
 
-def save_results(results: List[Dict], benchmark: str, model_name: str):
+def save_results(results: List[Dict], benchmark: str, model_name: str, output_dir: str = "results"):
     try:
-        output_path = Path("data/evaluation") 
-        output_path.parent.resolve().mkdir(parents=True, exist_ok=True)
+        os.makedirs(output_dir, exist_ok=True)
+        
         output_file = os.path.join(output_dir, f"{benchmark}_generated_{model_name}.csv")
         
         df = pd.DataFrame(results)
@@ -1044,15 +757,10 @@ def save_accuracy_metrics(accuracy_results: Dict, model_name: str, output_dir: s
         logging.error(f"Error saving accuracy metrics: {str(e)}")
         raise
 
-# def get_model_name_from_path(model_path: str) -> str:
-#     base_name = os.path.basename(model_path)
-#     model_name = os.path.splitext(base_name)[0]
-#     return model_name
-
 def main(
     model_path: str,
     model_name: str,
-    benchmarks: List[str] = ['arc', 'mmlu', 'drop', 'gsm8k', 'humaneval', 'hellaswag', 'winogrande'],
+    benchmarks: List[str] = ['arc', 'hellaswag', 'winogrande'],
     languages: List[str] = ['en', 'kk', 'ru'],
     batch_size: int = 32,
     tensor_parallel_size: int = 4,
@@ -1064,14 +772,11 @@ def main(
     max_tokens_humaneval: int = 128,
     max_tokens_hellaswag: int = 15,
     max_tokens_winogrande: int = 15,
-    output_dir: str = "results",
-    is_local_model = False,
-    datasets = "data/benchmark/datasets_v2"
+    output_dir: str = "results"
 ):
     try:
         logging.info(f"Loading model: {model_path}")
-        if is_local_model:
-            model_path = Path(model_path).expanduser().resolve().absolute()
+        
         llm = LLM(
             model=model_path,
             trust_remote_code=True,
@@ -1094,20 +799,19 @@ def main(
         
         for benchmark in benchmarks:
             benchmark_results = []
-            print(benchmark)
             max_tokens = max_tokens_map[benchmark]
             
             for lang in languages:
                 try:
                     # Special handling for different dataset paths
                     if benchmark == 'gsm8k':
-                        dataset_path = f"{datasets}/gsm8k_{lang}_v2.csv"
+                        dataset_path = f"datasets/gsm8k_{lang}_v2.csv"
                     elif benchmark == 'humaneval':
-                        dataset_path = f"{datasets}/humaneval_{lang}.csv"
+                        dataset_path = f"datasets/humaneval_{lang}.csv"
                     elif benchmark == "arc":
-                        dataset_path = f"{datasets}/arc_{lang}_v2.csv"
+                        dataset_path = f"datasets/arc_{lang}_v2.csv"
                     else:
-                        dataset_path = f"{datasets}/{benchmark}_{lang}.csv"
+                        dataset_path = f"datasets/{benchmark}_{lang}.csv"
                         
                     logging.info(f"Processing {benchmark.upper()} dataset for {lang} with {max_tokens} max tokens")
                     
@@ -1147,12 +851,12 @@ def main(
 
 if __name__ == "__main__":
     # Configuration
-    MODEL_PATH = "meta-llama/Llama-3.2-1B-Instruct"
-    MODEL_NAME = "Llama-3.2-1B-Instruct"
-    BENCHMARKS = ["gsm8k", "arc", "mmlu", "drop", "hellaswag", "humaneval", "winogrande"], 
-    LANGUAGES = [ "kk", "ru", "en"]
+    MODEL_PATH = "meta-llama/Llama-3.1-8B-Instruct"
+    MODEL_NAME = "meta-llama-Llama-3.1-8B-Instruct"
+    BENCHMARKS = ["arc", "hellaswag", "winogrande"] # "arc", "mmlu", "drop", "gsm8k", "humaneval", 
+    LANGUAGES = [ "kk", "ru", "en"] 
     BATCH_SIZE = 64
-    TENSOR_PARALLEL_SIZE = 8
+    TENSOR_PARALLEL_SIZE = 4
     DATA_PORTION = 100
     MAX_TOKENS_MMLU = 15
     MAX_TOKENS_ARC = 30
@@ -1161,7 +865,7 @@ if __name__ == "__main__":
     MAX_TOKENS_HUMANEVAL = 512  
     MAX_TOKENS_HELLASWAG = 15 
     MAX_TOKENS_WINOGRANDE = 15
-    IS_LOCAL = False
+    OUTPUT_DIR = "results"
     
     main(
         model_path=MODEL_PATH,
@@ -1178,5 +882,5 @@ if __name__ == "__main__":
         max_tokens_humaneval=MAX_TOKENS_HUMANEVAL,
         max_tokens_hellaswag=MAX_TOKENS_HELLASWAG,
         max_tokens_winogrande=MAX_TOKENS_WINOGRANDE,
-        is_local_model = False
+        output_dir=OUTPUT_DIR
     )
