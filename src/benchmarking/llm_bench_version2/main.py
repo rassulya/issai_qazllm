@@ -695,10 +695,10 @@ def calculate_pass_at_k(df: pd.DataFrame, df_generated: pd.DataFrame) -> float:
 
     return np.mean(pass_k)
 
-def save_results(results: List[Dict], benchmark: str, model_name: str, output_dir: str = "results"):
+def save_results(results: List[Dict], benchmark: str, model_name: str):
     try:
-        os.makedirs(output_dir, exist_ok=True)
-        
+        output_path = Path("data/evaluation") 
+        output_path.parent.resolve().mkdir(parents=True, exist_ok=True)
         output_file = os.path.join(output_dir, f"{benchmark}_generated_{model_name}.csv")
         
         df = pd.DataFrame(results)
@@ -776,7 +776,8 @@ def main(
 ):
     try:
         logging.info(f"Loading model: {model_path}")
-        
+        if is_local_model:
+            model_path = Path(model_path).expanduser().resolve().absolute()
         llm = LLM(
             model=model_path,
             trust_remote_code=True,
@@ -851,12 +852,12 @@ def main(
 
 if __name__ == "__main__":
     # Configuration
-    MODEL_PATH = "meta-llama/Llama-3.1-8B-Instruct"
-    MODEL_NAME = "meta-llama-Llama-3.1-8B-Instruct"
-    BENCHMARKS = ["arc", "hellaswag", "winogrande"] # "arc", "mmlu", "drop", "gsm8k", "humaneval", 
+    MODEL_PATH = "meta-llama/Llama-3.2-1B-Instruct"
+    MODEL_NAME = "Llama-3.2-1B-Instruct"
+    BENCHMARKS = ["gsm8k", "arc", "mmlu", "drop", "hellaswag", "humaneval", "winogrande"]
     LANGUAGES = [ "kk", "ru", "en"] 
     BATCH_SIZE = 64
-    TENSOR_PARALLEL_SIZE = 4
+    TENSOR_PARALLEL_SIZE = 8
     DATA_PORTION = 100
     MAX_TOKENS_MMLU = 15
     MAX_TOKENS_ARC = 30
@@ -865,7 +866,7 @@ if __name__ == "__main__":
     MAX_TOKENS_HUMANEVAL = 512  
     MAX_TOKENS_HELLASWAG = 15 
     MAX_TOKENS_WINOGRANDE = 15
-    OUTPUT_DIR = "results"
+    IS_LOCAL = False
     
     main(
         model_path=MODEL_PATH,
@@ -882,5 +883,5 @@ if __name__ == "__main__":
         max_tokens_humaneval=MAX_TOKENS_HUMANEVAL,
         max_tokens_hellaswag=MAX_TOKENS_HELLASWAG,
         max_tokens_winogrande=MAX_TOKENS_WINOGRANDE,
-        output_dir=OUTPUT_DIR
+        is_local_model = False
     )
