@@ -103,16 +103,7 @@ let currentLanguage = 'kk';
 const GENERATE_API_URL = '/generate';
 const PREDICT_API_URL = '/predict';
 
-let chatHistory = [];
-
-// Image handling elements
-const uploadImageButton = document.getElementById('upload-image');
-const imageInput = document.getElementById('image-input');
-const imagePreviewContainer = document.getElementById('image-preview-container');
-const imagePreview = document.getElementById('image-preview');
-const removeImageButton = document.getElementById('remove-image');
-
-let selectedImage = null;
+let chatHistory = [];;
 
 // Event Listeners
 toggleSettingsButton.addEventListener('click', () => {
@@ -154,101 +145,25 @@ userInput.addEventListener('keypress', (e) => {
 // Get the system prompt element
 const systemPromptInput = document.getElementById('system-prompt');
 
-// Image upload handling
-uploadImageButton.addEventListener('click', () => {
-    imageInput.click();
-});
-
-imageInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagePreview.src = e.target.result;
-            imagePreviewContainer.style.display = 'inline-block';
-            selectedImage = file;
-        }
-        reader.readAsDataURL(file);
-    }
-});
-
-removeImageButton.addEventListener('click', () => {
-    imagePreviewContainer.style.display = 'none';
-    imagePreview.src = '';
-    selectedImage = null;
-    imageInput.value = '';
-});
 
 // Handle form submission
 async function handleSubmit(e) {
     e.preventDefault();
     const message = userInput.value.trim();
     
-    if (!message && !selectedImage) return;
+    if (!message) return;
 
-    if (selectedImage) {
-        await handleImageUpload(selectedImage, message || "Describe the main elements in this image");
-        imagePreviewContainer.style.display = 'none';
-        imagePreview.src = '';
-        selectedImage = null;
-        imageInput.value = '';
+    addMessage('user', message);
+    const dbName = dbSelect.value;
+    if (dbName) {
+        await handleRAGRequest(message, dbName);
     } else {
-        addMessage('user', message);
-        const dbName = dbSelect.value;
-        if (dbName) {
-            await handleRAGRequest(message, dbName);
-        } else {
-            await handleChatRequest(message);
-        }
+        await handleChatRequest(message);
     }
 
     userInput.value = '';
     autoResizeTextarea(userInput);
     scrollToBottom();
-}
-
-// Handle image upload
-async function handleImageUpload(file, question) {
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('question', question);
-
-    const imageUrl = URL.createObjectURL(file);
-    
-    const imageMessageContainer = document.createElement('div');
-    imageMessageContainer.classList.add('image-message');
-
-    const img = document.createElement('img');
-    img.src = imageUrl;
-    img.alt = 'Uploaded image';
-
-    const p = document.createElement('p');
-    p.textContent = question;
-
-    imageMessageContainer.appendChild(img);
-    imageMessageContainer.appendChild(p);
-
-    addMessage('user', imageMessageContainer);
-
-    try {
-        const response = await fetch('/v1/chat/completions', {
-            method: 'POST',
-            body: formData
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        const aiMessage = result.choices[0].message.content;
-        addMessage('ai', aiMessage);
-    } catch (error) {
-        console.error('Error processing image:', error);
-        addMessage('ai', 'Sorry, there was an error processing your image.');
-    } finally {
-        URL.revokeObjectURL(imageUrl);
-    }
 }
 
 // Handle chat request

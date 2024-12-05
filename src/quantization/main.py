@@ -93,7 +93,7 @@ def load_kk_calib():
 model.quantize(
     tokenizer,
     quant_config=quant_config,
-    calib_data=load_kk_calib()
+    #calib_data=load_kk_calib()
 )
 
 # Save the quantized model and tokenizer
