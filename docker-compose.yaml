@@ -8,7 +8,7 @@ services:
     runtime: nvidia
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
-      - COMMAND=${COMMAND}  # Pass the COMMAND as an environment variable
+      - DIR=${DIR}  # Pass the COMMAND as an environment variable
     volumes:
       - ${PWD}:/issai_qazllm
     ports:

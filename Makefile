@@ -38,10 +38,6 @@ model_docker_run:
 	@echo "Running $(DIR)"
 	@DIR=$(DIR) docker-compose up --build
 
-# Run the Docker container with the default command
-model_docker_run_default:
-	@echo "Running with default command"
-	COMMAND="torchrun --standalone --nnodes=1 --nproc-per-node=2 cli_demo.py --from_pretrained cogvlm-chat-v1.1 --version chat --english --bf16" docker-compose up
 
 # Tag the image (optional, if you want to re-tag manually)
 model_docker_tag:
