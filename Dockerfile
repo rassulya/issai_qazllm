@@ -1,5 +1,5 @@
 # Stage 1: Base CUDA image
-FROM nvidia/cuda:12.2.2-runtime-ubuntu22.04  AS base
+FROM nvidia/cuda:12.2.2-base-ubuntu22.04 AS base
 
 
 RUN apt-get -y update \
@@ -15,4 +15,5 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
+# CMD ["bash", "-c", "nvidia-smi"]
 # CMD ["bash", "-c", "exec \"$@\"", "--"]

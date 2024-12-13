@@ -362,7 +362,7 @@ def save_results(results: List[Dict], benchmark: str, model_name: str):
         logging.error(f"Error saving results: {str(e)}")
         raise
 
-def save_accuracy_metrics(accuracy_results: Dict, model_name: str, output_dir: str = "results"):
+def save_accuracy_metrics(accuracy_results: Dict, model_name: str, output_dir: str = "data/evaluation"):
     try:
         os.makedirs(output_dir, exist_ok=True)
         output_file = os.path.join(output_dir, f"accuracy_metrics_{model_name}.json")
