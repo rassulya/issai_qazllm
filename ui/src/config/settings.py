@@ -3,6 +3,7 @@ import yaml
 import os
 from functools import lru_cache
 
+
 class Settings:
     def __init__(self):
         self.root_dir = Path(os.getenv("PROJECT_ROOT", "."))
@@ -15,8 +16,10 @@ class Settings:
         self.model_host = self.model_config["host"]
         
         # VLLM URL
-        self.vllm_url = f"http://{self.model_host}:{self.model_port}/v1"
-        
+
+        self.vllm_url = f"{os.getenv('MODEL_SERVER_URL')}/v1"
+        print("DVLLLLLLLS")
+        print(self.vllm_url )
         # API settings
         self.api_port = self.config["api"]["port"]
         self.api_host = self.config["api"]["host"]

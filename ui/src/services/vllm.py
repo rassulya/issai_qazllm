@@ -9,6 +9,8 @@ from config.settings import get_settings
 logger = logging.getLogger(__name__)
 settings = get_settings()
 
+
+
 class VLLMClient:
     def __init__(self):
         self.settings = settings

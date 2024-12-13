@@ -1,0 +1,9 @@
+# Use the base image for FastAPI
+FROM tiangolo/uvicorn-gunicorn-fastapi:latest
+
+# Install additional requirements
+WORKDIR /ui_qazllm
+
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
