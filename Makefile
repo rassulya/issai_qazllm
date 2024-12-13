@@ -94,7 +94,12 @@ install_ui_requirements:
 	@echo "Requirements installed."
 	
 download_ui_models:
-	@. $(ENV_NAME_UI)/bin/activate && python $(UI_MODELS)
+	python3 -m venv envs/tmp_env && \
+	. envs/tmp_env/bin/activate && \
+	pip install huggingface_hub && \
+	python $(UI_MODELS) && \
+	deactivate && \
+	rm -rf envs/tmp_env
 
 run_ui_server: 
 	@. $(ENV_NAME_UI)/bin/activate && python $(UI_SERVER)

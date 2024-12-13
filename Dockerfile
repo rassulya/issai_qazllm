@@ -15,5 +15,4 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-# CMD ["bash", "-c", "nvidia-smi"]
-# CMD ["bash", "-c", "exec \"$@\"", "--"]
+

@@ -7,14 +7,16 @@ services:
     image: issai_qazllm:latest
     runtime: nvidia
     environment:
-      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_VISIBLE_DEVICES=4,5,6,7
       - DIR=${DIR}  # Pass the COMMAND as an environment variable
+      - HF_ALLOW_CODE_EVAL=1
+      - TOKENIZERS_PARALLELISM=false
     volumes:
       - ${PWD}:/issai_qazllm
+      - /data/nvme7n1p1/checkpoinst_llama_8B_05122024:/issai_qazllm/models/
     ports:
       - "3434:3434"
-    devices:
-      - "/dev/nvidia0:/dev/nvidia0"
-      - "/dev/nvidia1:/dev/nvidia1"
-    # entrypoint: ["bash", "-c", "source /opt/venv/bin/activate && exec \"$COMMAND\""]  # Ensure virtualenv is activated
+    # devices:
+    #   - "/dev/nvidia0:/dev/nvidia0"
+    #   - "/dev/nvidia1:/dev/nvidia1"
     command: /bin/sh -c 'python3 $DIR'
