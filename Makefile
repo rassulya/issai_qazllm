@@ -13,38 +13,24 @@ VLLM_SERVER = ui/src/run_vllm.py
 UI_MODELS = utils/download_models.py
 
 
-
-
-# Define the image name/tag
-
-
-
 # Targets
 .PHONY: export_env_vars create_model_env install_model_requirements \
-		deploy_ui create_ui_env install_ui_requirements run_ui_server run_vllm_server download_ui_models \
-		model_docker_build model_docker_run model_docker_run_default model_docker_tag model_docker_down \
-		install_nvidia_docker
-
+		create_ui_env install_ui_requirements download_ui_models \
+		run_model build_docker docker_down install_nvidia_docker run_ui
 # Target to install NVIDIA Docker
 install_nvidia_docker:
 	./install_nvidia_docker.sh
 
 # Build the Docker image
-model_docker_build:
+build_docker:
 	docker-compose build
 
 # Run the Docker container with a custom command
-model_docker_run:
+run_model:
 	@echo "Running $(DIR)"
 	@DIR=$(DIR) docker-compose up --build
 
-
-# Tag the image (optional, if you want to re-tag manually)
-model_docker_tag:
-	docker tag my-cogvlm-image:latest $(IMAGE_TAG)
-
-# Bring down any running containers
-model_docker_down:
+docker_down:
 	docker-compose down
 
 export_env_vars:
@@ -63,22 +49,7 @@ install_model_requirements:
 	@. $(ENV_NAME_MODEL)/bin/activate && pip install -r $(REQUIREMENTS_FILE_MODEL)
 	@echo "Requirements installed."
 
-run_benchmark_v1: 
-	@. $(ENV_NAME_MODEL)/bin/activate && python $(BENCHMARK_V1)
 
-run_benchmark_v2: 
-	@. $(ENV_NAME_MODEL)/bin/activate && python $(BENCHMARK_V2)
-
-create_ui_env:
-	@if [ ! -d $(ENV_NAME_UI) ]; then \
-		python3 -m venv $(ENV_NAME_UI); \
-		echo "Virtual environment $(ENV_NAME_UI) created."; \
-	else \
-		echo "Virtual environment $(ENV_NAME_UI) already exists."; \
-	fi
-
-####UI
-deploy_ui: export_env_vars create_ui_env install_ui_requirements download_ui_models run_ui_server run_vllm_server
 # Create the Python virtual environment
 create_ui_env:
 	@if [ ! -d $(ENV_NAME_UI) ]; then \
@@ -101,12 +72,5 @@ download_ui_models:
 	deactivate && \
 	rm -rf envs/tmp_env
 
-run_ui_server: 
-	@. $(ENV_NAME_UI)/bin/activate && python $(UI_SERVER)
-
-run_vllm_server: 
-	@. $(ENV_NAME_UI)/bin/activate && python $(VLLM_SERVER)
-
-
-# Clean up the environment
-
+run_ui:
+	cd ui && docker-compose up
