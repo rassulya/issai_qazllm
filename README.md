@@ -44,9 +44,10 @@ Made in Kazakhstan - Қазақстанда жасалған
 
 ### Setting Configurations
 
-Edit the `conf/parameters_benchmark.yaml` file to set your desired configurations for benchmarking.
-Edit the `conf/parameters_quantization.yaml` file to set your desired configurations for quantization.
-Edit the `conf/parameters_ui.yaml` file to set your desired configurations for ui deployment.
+- Edit the `conf/parameters_benchmark.yaml` file to set your desired configurations for benchmarking.
+- Edit the `conf/parameters_quantization.yaml` file to set your desired configurations for quantization.
+- Edit the `conf/parameters_ui.yaml` file to set your desired configurations for ui deployment.
+
 ---
 
 ### Download Datasets
