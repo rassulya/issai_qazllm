@@ -4,7 +4,7 @@ REQUIREMENTS_FILE_MODEL = requirements.txt
 BENCHMARK_V1 = src/benchmarking/llm_bench_version1/main.py
 BENCHMARK_V2 = src/benchmarking/llm_bench_version2/main.py
 MODEL_IMAGE_TAG=issai_qazllm:latest
-
+TRAINING_IMAGE=training_image:latest
 # Variables
 ENV_NAME_UI = envs/qazllm_ui_env
 REQUIREMENTS_FILE_UI = ui/environment/requirements.txt
@@ -16,7 +16,7 @@ UI_MODELS = utils/download_models.py
 # Targets
 .PHONY: export_env_vars create_model_env install_model_requirements \
 		create_ui_env install_ui_requirements download_ui_models \
-		run_model build_docker docker_down install_nvidia_docker run_ui
+		run_model run training build_docker docker_down install_nvidia_docker run_ui
 # Target to install NVIDIA Docker
 install_nvidia_docker:
 	./install_nvidia_docker.sh
@@ -28,7 +28,10 @@ build_docker:
 # Run the Docker container with a custom command
 run_model:
 	@echo "Running $(DIR)"
-	@DIR=$(DIR) docker-compose up --build
+	@DIR=$(DIR) docker-compose up 
+
+run_training:
+	docker run -it --runtime=nvidia -v "$(pwd)":/issai_qazllm $(TRAINING_IMAGE)
 
 docker_down:
 	docker-compose down

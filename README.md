@@ -47,8 +47,6 @@ Made in Kazakhstan - Қазақстанда жасалған
 Edit the `conf/parameters_benchmark.yaml` file to set your desired configurations for benchmarking.
 Edit the `conf/parameters_quantization.yaml` file to set your desired configurations for quantization.
 Edit the `conf/parameters_ui.yaml` file to set your desired configurations for ui deployment.
-
-
 ---
 
 ### Download Datasets
@@ -60,22 +58,21 @@ make run_model DIR=src/utils/download_dataset.py
 
 ---
 
-### Build Docker Images (if required)
+### Build Docker Images for Benchmarking and Quantization
 
 If Docker images need to be built, run:
 ```bash
 make build_docker
 ```
 
+### Build Docker Images for Training
+Training of a model requires different packages. Therefore make following changes:
+
+1) In Dockefile change line ```COPY requirements.txt ./requirements.txt``` to ```COPY src/training/requirements.txt ./requirements.txt``` 
+2) Change ```image```(Image name) in docker-compose to desired image name and image tag. Put the same name into Makefile ```TRAINING_IMAGE``` variable
+3) Run ```make build_docker```
+
 ---
-
-### Run Benchmark
-
-To start the benchmarking process, run:
-```bash
-make run_via_compose DIR=src/main.py
-```
-
 
 ### Run Benchmark
 
@@ -90,11 +87,11 @@ make run_model DIR="src/quatization/main.py"
 ```
 
 ### Run Training
-
+Firstly run docker container
 ```bash
-make run_model DIR="src/quatization/main.py"
+make run_training"
 ```
-
+Then, refer to following [Repo](https://github.com/IS2AI/KazLLM_Bee) to use the training scripts
 ### Run UI
 ```bash
 make run_ui
