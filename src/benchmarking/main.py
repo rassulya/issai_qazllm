@@ -21,7 +21,7 @@ ROOT_DIR = Path(os.getenv("PROJECT_ROOT", "."))
 CONFIG_PATH = ROOT_DIR / "conf" / "parameters_benchmark.yaml"
 CREDENTIALS_PATH = ROOT_DIR / "conf" / "credentials.yaml"
 OUTPUT_DIR = ROOT_DIR / "data" / "evaluation"
-IS_CREDENTIALS=False
+IS_CREDENTIALS=True
 
 DEFAULT_MAX_TOKENS = {
     "mmlu": 15,

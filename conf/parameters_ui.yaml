@@ -1,6 +1,6 @@
 model:
-  model_path: models/Nemotron_instruct_corex5_mcq_70B_9900_safetesnors_old_torchtune_AWQ-4bit-g128-gemm
-  tokenizer: models/Nemotron_instruct_corex5_mcq_70B_9900_safetesnors_old_torchtune_AWQ-4bit-g128-gemm
+  model_path: issai/LLama-3.1-KazLLM-1.0-8B-AWQ4
+  tokenizer: issai/LLama-3.1-KazLLM-1.0-8B-AWQ4
   is_local: True
   port: 8003
   host: "0.0.0.0"

@@ -33,7 +33,11 @@ def filter_files(api: HfApi, repo_id: str) -> list:
     print(all_files)
     for i,v in enumerate(all_files):
         if 'csv' not in v:
+            print(v)
             all_files.pop(i) 
+    # remove README.md #TODO fix this
+    all_files.remove('README.md')
+    print("*******",all_files)
     return sorted([f for f in all_files])
 
 def process_and_save_dataset(config: dict, file_name: str, save_dir: Path):
@@ -67,7 +71,6 @@ if __name__ == "__main__":
     # Get filtered files from the repository
     repo_id = config["data_repo"]
     files_to_process = filter_files(api, repo_id)
-    
     # Process and save each dataset
     for file_name in files_to_process:
         process_and_save_dataset(config, file_name, DATA_SAVE_DIR)

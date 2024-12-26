@@ -1,8 +1,6 @@
-environment:
-  cuda_visible_devices: "0,1,2,3"  # Ensure only GPUs 4-7 are used
-
 model:
-  path: "models/Nemotron_instruct_corex5_mcq_70B_9900_safetesnors_old_torchtune"
+  path: "issai/LLama-3.1-KazLLM-1.0-8B-AWQ4"
+  is_local: False
 
 quant_config:
   zero_point: True

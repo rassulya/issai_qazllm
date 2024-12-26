@@ -7,26 +7,34 @@ from transformers import AutoTokenizer
 from datasets import load_dataset
 from pathlib import Path
 import yaml  
+from huggingface_hub import login
 
 ROOT_DIR = Path(os.getenv("PROJECT_ROOT", "."))
 
 CONFIG_PATH = ROOT_DIR / "conf" / "parameters_quantization.yaml"
-
+CREDENTIALS_PATH = ROOT_DIR / "conf" / "credentials.yaml"
 
 def load_config():
     with open(CONFIG_PATH, "r") as file:
         config = yaml.safe_load(file)
     return config
 
+def load_credentials(credentials_path: Path) -> str:
+    """Load Hugging Face token from a credentials YAML file."""
+    with open(credentials_path, "r") as file:
+        return yaml.safe_load(file).get("hf_token", "")
+    
+    
+    
 config = load_config()
-env_config = config["environment"]
-cuda_visible_devices = env_config["cuda_visible_devices"]
+cuda_visible_devices = os.getenv("NVIDIA_VISIBLE_DEVICES")
 model_path = config["model"]["path"]
 quant_config = config["quant_config"]
 max_memory = config["resources"]["max_memory"]
 # Set environment variable to use specific GPUs
-os.environ['CUDA_VISIBLE_DEVICES'] = cuda_visible_devices  # Ensure only GPUs 4-7 are used
 
+hf_token = load_credentials(CREDENTIALS_PATH)
+login(hf_token)
 
 
 
@@ -45,8 +53,8 @@ output_path.parent.resolve().mkdir(parents=True, exist_ok=True)
 
 print(f"Quantized model will be saved to: {output_path}")
 
-
-model_path = Path(model_path).expanduser().resolve().absolute()
+if config["model"]["is_local"]:
+    model_path = Path(model_path).expanduser().resolve().absolute()
 
 
 # Load the original model and tokenizer
@@ -79,8 +87,11 @@ def initialize_and_move_meta_to_cuda(model, device_ids):
             param.data = param.to(device)
             device_ids.append(device.index)  # Append the device ID back to the end of the list
 
+def get_cuda_visible_devices():
+    return [int(i) for i in cuda_visible_devices.split(",")]
+
 # Move meta tensors to available GPUs
-initialize_and_move_meta_to_cuda(model, [0, 1, 2, 3])  # Use indices 0, 1, 2, 3 for GPUs 4, 5, 6, 7
+initialize_and_move_meta_to_cuda(model, get_cuda_visible_devices())  # Use indices 0, 1, 2, 3 for GPUs 4, 5, 6, 7
 
 # Enable gradient checkpointing to save memory (if supported by the model)
 if hasattr(model, 'gradient_checkpointing_enable'):
