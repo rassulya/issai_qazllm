@@ -39,12 +39,11 @@ Made in Kazakhstan - Қазақстанда жасалған
 
 5. **Configure GPU access**:
    In the `docker-compose.yaml` file, set the `NVIDIA_VISIBLE_DEVICES` environment variable to specify the GPUs you want to use.
-
 ---
 
 ### Setting Configurations
 
-- Edit the `conf/parameters_benchmark.yaml` file to set your desired configurations for benchmarking.
+- Edit the `conf/parameters_benchmark.yaml` file to set your desired configurations for benchmarking. If you changed number gpus in docker-compose, set number of tensor_parallel_size to be equal.
 - Edit the `conf/parameters_quantization.yaml` file to set your desired configurations for quantization.
 - Edit the `conf/parameters_ui.yaml` file to set your desired configurations for ui deployment.
 
@@ -52,7 +51,7 @@ Made in Kazakhstan - Қазақстанда жасалған
 
 ### Setting credentials
 
-- Create file  `conf/credetials.yaml`. Include inside your credentials as *hf_token: <your_huggingface_token>* 
+- Create file  `conf/credentials.yaml`. Include inside your credentials as *hf_token: <your_huggingface_token>* 
 
 ---
 
@@ -76,10 +75,10 @@ Training of a model requires different packages. Therefore make following change
 
 To download the required datasets for benchmarking, run:
 ```bash
-make run_model DIR=src/utils/download_dataset.py
+make run_model DIR=src/benchmarking/utils/download_dataset.py
 ```
 ---
-
+### Get access to Gated datasets and models
 ### Run Benchmark
 
 ```bash
@@ -89,7 +88,7 @@ make run_model DIR="src/benchmarking/main.py"
 ### Run Quantization
 
 ```bash
-make run_model DIR="src/quatization/main.py"
+make run_model DIR="src/quantization/main.py"
 ```
 
 ### Run Training
@@ -105,3 +104,4 @@ make run_training
 ```bash
 make run_ui
 ```
+wait until model server is deployed
