@@ -14,7 +14,7 @@ UI_MODELS = utils/download_models.py
 
 
 # Targets
-.PHONY: export_env_vars create_model_env install_model_requirements \
+.PHONY:  create_model_env install_model_requirements \
 		create_ui_env install_ui_requirements download_ui_models \
 		run_model run training build_docker docker_down install_nvidia_docker run_ui
 # Target to install NVIDIA Docker
@@ -31,8 +31,13 @@ run_model:
 	@DIR=$(DIR) docker-compose up 
 
 run_training:
-	docker run -it --runtime=nvidia -v "$(pwd)":/issai_qazllm $(TRAINING_IMAGE)
-
+	docker run -it --runtime=nvidia \
+		-v "$(shell pwd)":/issai_qazllm \
+		-w /issai_qazllm \
+		-e PROJECT_ROOT="$(shell pwd)" \
+		$(TRAINING_IMAGE) \
+		bash -c 'echo "Host project root: $$HOST_PROJECT_ROOT"; export PROJECT_ROOT=$(pwd); echo "Container project root: $$PROJECT_ROOT"; exec bash'
+		
 docker_down:
 	docker-compose down
 

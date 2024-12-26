@@ -53,6 +53,7 @@ class Run(Subcommand):
             ),
             formatter_class=argparse.RawTextHelpFormatter,
         )
+        print("RUNNING TRAIN MODEL")
         self._add_arguments()
         self._parser.set_defaults(func=self._run_cmd)
 

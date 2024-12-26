@@ -11,8 +11,9 @@ RUN apt-get -y install python3.11 python3-pip
 
 WORKDIR /issai_qazllm
 
-COPY requirements.txt .
+# COPY src/training/requirements.txt ./requirements.txt
 
+COPY requirements.txt ./requirements.txt
 RUN pip install -r requirements.txt
 
-
+RUN chmod -R 777 /issai_qazllm

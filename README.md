@@ -50,12 +50,9 @@ Made in Kazakhstan - Қазақстанда жасалған
 
 ---
 
-### Download Datasets
+### Setting credentials
 
-To download the required datasets for benchmarking, run:
-```bash
-make run_model DIR=src/utils/download_dataset.py
-```
+- Set your hugging_face credentials in  `conf/credetials.yaml` 
 
 ---
 
@@ -75,6 +72,14 @@ Training of a model requires different packages. Therefore make following change
 
 ---
 
+### Download Datasets for Benchmarking
+
+To download the required datasets for benchmarking, run:
+```bash
+make run_model DIR=src/utils/download_dataset.py
+```
+---
+
 ### Run Benchmark
 
 ```bash
@@ -88,11 +93,14 @@ make run_model DIR="src/quatization/main.py"
 ```
 
 ### Run Training
-Firstly run docker container
+1) Run docker container
 ```bash
-make run_training"
+make run_training
 ```
-Then, refer to following [Repo](https://github.com/IS2AI/KazLLM_Bee) to use the training scripts
+2) Setup required configs in *src/training/config_train/* based on your model and train type. You can use default one
+3) Go to *src/training*
+4) Run *./start.sh* if you are training 8b and *./start_70b.sh* if 70b model
+
 ### Run UI
 ```bash
 make run_ui

@@ -1,7 +1,7 @@
 # Tokenizer
 tokenizer:
   _component_: torchtune.models.llama3.llama3_tokenizer
-  path: tokenizer_path
+  path: issai/LLama-3.1-KazLLM-1.0-8B
   max_seq_len: 8192
 
 # Dataset
@@ -9,7 +9,7 @@ dataset:
   _component_: torchtune.datasets.instruct_dataset
   source: json
   split: train
-  data_files: dataset_path/*.json
+  data_files: issai/LLM_internvl_sft_datasets/english/2024.09.06_instruct_en_benchmarks-arc_154489.json.tar.gz
   template: torchtune.data.AlpacaInstructTemplate
   column_map:
     instruction: instruction
@@ -27,7 +27,7 @@ model:
 
 checkpointer:
   _component_: torchtune.utils.FullModelHFCheckpointer
-  checkpoint_dir: model_8B
+  checkpoint_dir: issai/LLama-3.1-KazLLM-1.0-8B
   checkpoint_files: [
     model-00001-of-00004.safetensors,
     model-00002-of-00004.safetensors,

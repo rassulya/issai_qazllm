@@ -13,4 +13,5 @@ export PYTHONPATH=.
 # export NCCL_DEBUG=INFO 
 
 # torchrun --nproc_per_node=8 --nnodes=8 --master_addr=<ip_address> --master_port=1234 --node_rank=1  recipes/full_finetune_distributed_loop.py --config config_train/8B_3.1_base_val_loop.yaml
-python tune.py run --nproc_per_node=8 --nnodes=6 --master_addr=<ip_address> --master_port=1234 --node_rank=0  full_finetune_distributed_loop_no_val --config config_train/8B_3.1_inst_noval_loop.yaml
+# python tune.py run --nproc_per_node=8 --nnodes=6 --master_addr=<ip_address> --master_port=1234 --node_rank=0  full_finetune_distributed_loop_no_val --config config_train/8B_3.1_inst_noval_loop.yaml
+python3 tune.py run --nproc_per_node=8 --nnodes=6 --node_rank=0  full_finetune_distributed_loop_no_val --config config_train/8B_3.1_inst_noval_loop.yaml

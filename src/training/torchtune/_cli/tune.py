@@ -5,12 +5,27 @@
 # LICENSE file in the root directory of this source tree.
 
 import argparse
+import os
+import yaml
+from pathlib import Path
 
 from torchtune._cli.cp import Copy
 from torchtune._cli.download import Download
 from torchtune._cli.ls import List
 from torchtune._cli.run import Run
 from torchtune._cli.validate import Validate
+
+from huggingface_hub import login
+
+# ROOT_DIR = Path(os.getenv("PROJECT_ROOT", "/issai_qazllm"))
+ROOT_DIR = Path("/issai_qazllm")
+CREDENTIALS_PATH = ROOT_DIR / "conf" / "credentials.yaml"
+print(CREDENTIALS_PATH)
+
+def load_credentials(credentials_path: Path) -> str:
+    """Load Hugging Face token from a credentials YAML file."""
+    with open(credentials_path, "r") as file:
+        return yaml.safe_load(file).get("hf_token", "")
 
 
 class TuneCLIParser:
@@ -44,6 +59,9 @@ class TuneCLIParser:
 
 
 def main():
+    hf_token = load_credentials(CREDENTIALS_PATH)
+    login(hf_token)
+    print("SUCCESFULLY LOGGED IN")
     parser = TuneCLIParser()
     args = parser.parse_args()
     parser.run(args)
