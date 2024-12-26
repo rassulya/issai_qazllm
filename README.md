@@ -52,7 +52,7 @@ Made in Kazakhstan - Қазақстанда жасалған
 
 ### Setting credentials
 
-- Set your hugging_face credentials in  `conf/credetials.yaml` 
+- Create file  `conf/credetials.yaml`. Include inside your credentials as *hf_token: <your_huggingface_token>* 
 
 ---
 
