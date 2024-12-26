@@ -1,3 +1,49 @@
+# # Config for running the InferenceRecipe in generate.py to generate output from an LLM
+# #
+# # To launch, run the following command from root torchtune directory:
+# #    tune run generate --config generation
+
+# # Model arguments
+# model:
+#   _component_: torchtune.models.llama3_1.llama3_1_8b
+
+# checkpointer:
+#   _component_: torchtune.utils.FullModelHFCheckpointer
+#   checkpoint_dir: /data/nvme3n1p1/adal_workspace/batyr_adal_exp/torchtune/checkpoints/unfrozen-llama-500-tokens-kk
+#   checkpoint_files: [
+#     hf_model_0001_4000.pt,
+#     hf_model_0002_4000.pt,
+#     hf_model_0003_4000.pt,
+#     hf_model_0004_4000.pt,
+#   ]
+#   output_dir: /data/nvme3n1p1/adal_workspace/batyr_adal_exp/torchtune/checkpoints/tmp-output
+#   model_type: LLAMA3
+
+# device: cuda
+# dtype: bf16
+
+# seed: 1234
+
+# # Tokenizer arguments
+# tokenizer:
+#   _component_: torchtune.models.llama3.llama3_tokenizer
+#   path: /data/nvme3n1p1/adal_workspace/batyr_adal_exp/batyr_torchtune/KazLLM_Bee/custom_tokenizers/llama3-1-tokenizer_kk_plus_500
+
+# # Generation arguments; defaults taken from gpt-fast
+# prompt: "америка және еуродағы адамдар"
+# instruct_template: null
+# chat_format: null
+# max_new_tokens: 200
+# temperature: 0.6 # 0.8 and 0.6 are popular values to try
+# top_k: 300
+# # It is recommended to set enable_kv_cache=False for long-context models like Llama3.1
+# enable_kv_cache: False
+
+# quantizer: null
+
+
+########################################
+
 # Config for running the InferenceRecipe in generate.py to generate output from an LLM
 #
 # To launch, run the following command from root torchtune directory:
@@ -5,17 +51,19 @@
 
 # Model arguments
 model:
-  _component_: torchtune.models.llama2.llama2_7b
+  _component_: torchtune.models.llama3_1.llama3_1_8b
 
 checkpointer:
   _component_: torchtune.utils.FullModelHFCheckpointer
-  checkpoint_dir: /tmp/Llama-2-7b-hf/
+  checkpoint_dir: /home/batyr_arystanbekov/multiple-tokenizers-train-1/
   checkpoint_files: [
-    pytorch_model-00001-of-00002.bin,
-    pytorch_model-00002-of-00002.bin,
+    hf_model_0001_15000.pt,
+    hf_model_0002_15000.pt,
+    hf_model_0003_15000.pt,
+    hf_model_0004_15000.pt,
   ]
-  output_dir: /tmp/Llama-2-7b-hf/
-  model_type: LLAMA2
+  output_dir: /data/nvme3n1p1/adal_workspace/batyr_adal_exp/torchtune/checkpoints/tmp-output
+  model_type: LLAMA3
 
 device: cuda
 dtype: bf16
@@ -24,17 +72,19 @@ seed: 1234
 
 # Tokenizer arguments
 tokenizer:
-  _component_: torchtune.models.llama2.llama2_tokenizer
-  path: /tmp/Llama-2-7b-hf/tokenizer.model
-
+  _component_: torchtune.models.llama3.llama3_tokenizer
+  path: /home/batyr_arystanbekov/multiple-tokenizers-train-1/tokenizer_sequences/llama3-1-tokenizer_kk_plus_35
+  
 # Generation arguments; defaults taken from gpt-fast
-prompt: "Tell me a joke?"
+prompt: "Қазақ спортшылары "
 instruct_template: null
 chat_format: null
-max_new_tokens: 300
+max_new_tokens: 200
 temperature: 0.6 # 0.8 and 0.6 are popular values to try
 top_k: 300
 # It is recommended to set enable_kv_cache=False for long-context models like Llama3.1
-enable_kv_cache: True
+enable_kv_cache: False
 
 quantizer: null
+
+

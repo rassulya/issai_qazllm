@@ -1,0 +1,92 @@
+# Tokenizer
+tokenizer:
+  _component_: torchtune.models.llama3.llama3_tokenizer
+  path: /raid/adal_abilbekov/workspace/loop_rewrite_project/torchtune_old/tokenizers/llama3-1-tokenizer-kk-plus
+
+# Dataset
+dataset:
+  _component_: torchtune.datasets.text_completion_dataset
+  split: train
+  column: text
+  source: json
+  data_files: /raid/adal_abilbekov/workspace/allData/debbug_data/scrap_add.json
+  val_data_files_kk: /raid/adal_abilbekov/workspace/allData/debbug_data/val_kk.json
+  val_data_files_ru: /raid/adal_abilbekov/workspace/allData/debbug_data/val_ru.json
+  val_data_files_en: /raid/adal_abilbekov/workspace/allData/debbug_data/val_en.json
+  val_data_files_tr: /raid/adal_abilbekov/workspace/allData/debbug_data/val_tr.json  
+  # data_files: /data/nvme1n1p1/qazllm/datasets/jsonGzLLMEnKz190724C/wiki_head.json
+  max_seq_len: 4
+  packed: True
+seed: null
+shuffle: False
+
+
+# Model Arguments
+model:
+  _component_: torchtune.models.llama3_1.llama3_1_8b
+
+checkpointer:
+  _component_: torchtune.utils.FullModelHFCheckpointer
+  checkpoint_dir: /raid/adal_abilbekov/workspace/llama8B24.04.24Inference/models/Meta-Llama-3.1-8B-Instruct
+  checkpoint_files: [
+    model-00001-of-00004.safetensors, 
+    model-00002-of-00004.safetensors,
+    model-00003-of-00004.safetensors,    
+    model-00004-of-00004.safetensors       
+  ]
+  recipe_checkpoint: null
+  output_dir: /raid/adal_abilbekov/workspace/loop_rewrite_project/torchtune/chkpt
+  model_type: LLAMA3
+resume_from_checkpoint: False
+
+# Fine-tuning arguments
+batch_size: 1
+batch_size_val: 1
+epochs: 2
+save_per_step: 1000
+
+optimizer:
+  _component_: torch.optim.AdamW
+  lr: 2e-5
+  foreach: False
+
+loss:
+  _component_: torch.nn.CrossEntropyLoss
+max_steps_per_epoch: null
+gradient_accumulation_steps: 1
+
+
+# Training env
+device: cuda
+
+# Memory management
+enable_activation_checkpointing: True
+memory_efficient_fsdp_wrap: True
+
+# Reduced precision
+dtype: bf16
+
+# Logging
+
+metric_logger:
+  _component_: torchtune.utils.metric_logging.DiskLogger
+  log_dir: ${output_dir}
+output_dir: /raid/adal_abilbekov/workspace/loop_rewrite_project/LLM/logs_4l
+log_every_n_steps: 1
+log_peak_memory_stats: False
+
+
+
+
+# enable logging to the built-in WandBLogger
+# metric_logger:
+#   _component_: torchtune.utils.metric_logging.WandBLogger
+#   # the W&B project to log to
+#   project: adal_debug
+#   name: run_check
+# output_dir: /data/nvme3n1p1/adal_workspace/chkpt_val
+# log_every_n_steps: 1
+# log_peak_memory_stats: False
+
+sub_length: 1000
+train_type: base

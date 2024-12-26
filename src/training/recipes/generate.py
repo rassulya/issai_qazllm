@@ -3,6 +3,12 @@
 #
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
+
+# import os
+# os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+# os.environ["CUDA_VISIBLE_DEVICES"]="6"
+
+
 import itertools
 import sys
 import time
@@ -137,6 +143,7 @@ class InferenceRecipe:
             cfg.prompt, cfg.get("chat_format", None), cfg.get("instruct_template", None)
         )
         prompt = torch.tensor(tokens, dtype=torch.int, device=self._device)
+        print(prompt)
 
         custom_generate_next_token = None
 
@@ -172,7 +179,14 @@ class InferenceRecipe:
         )
         t = time.perf_counter() - t0
 
-        logger.info(self._tokenizer.decode(generated_tokens[0]))
+        #logger.info(self._tokenizer.decode(generated_tokens[0]))
+        print("\n")
+        print(self._tokenizer.decode(generated_tokens[0]))
+        print("\n")
+
+        print("\n")
+        print(generated_tokens[0])
+        print("\n")
 
         model_size = sum(
             [

@@ -25,19 +25,9 @@ tokenizer:
 
 # Dataset
 dataset:
-  _component_: torchtune.datasets.alpaca_cleaned_dataset
-  source: json
-  split: train
-  data_files: /data/nvme7n1p1/critical_all/critical_instruct/2024.09.09_instruct_kk_benchmarks-mmlu_17725926.json
-  template: torchtune.data.AlpacaInstructTemplate
-  column_map:
-    instruction: instruction
-    input: input
-    output: output
-  max_seq_len: 1024
-  packed: True
+  _component_: torchtune.datasets.alpaca_dataset
 seed: null
-shuffle: False
+shuffle: True
 
 # Model Arguments
 model:

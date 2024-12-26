@@ -23,13 +23,20 @@
 # Tokenizer
 tokenizer:
   _component_: torchtune.models.llama3.llama3_tokenizer
-  path: /tmp/Meta-Llama-3.1-8B-Instruct/original/tokenizer.model
+  path: /data/nvme3n1p1/adal_workspace/custom_tokenizer/llama3-1-tokenizer-kk-plus
 
 # Dataset
 dataset:
-  _component_: torchtune.datasets.alpaca_dataset
+  _component_: torchtune.datasets.text_completion_dataset
+  split: train
+  column: text
+  source: json
+  data_files: /data/nvme1n1p1/qazllm/datasets/jsonGzLLMEnKz190724C/gzipAll/scrap_add.json
+  # data_files: /data/nvme1n1p1/qazllm/datasets/jsonGzLLMEnKz190724C/wiki_head.json
+  max_seq_len: 8192
+  packed: True
 seed: null
-shuffle: True
+shuffle: False
 
 # Model Arguments
 model:
@@ -37,7 +44,7 @@ model:
 
 checkpointer:
   _component_: torchtune.utils.FullModelHFCheckpointer
-  checkpoint_dir: /tmp/Meta-Llama-3.1-8B-Instruct/
+  checkpoint_dir: /data/nvme1n1p1/qazllm/Meta-Llama-3.1-8B-Instruct
   checkpoint_files: [
     model-00001-of-00004.safetensors,
     model-00002-of-00004.safetensors,
@@ -45,12 +52,13 @@ checkpointer:
     model-00004-of-00004.safetensors
   ]
   recipe_checkpoint: null
-  output_dir: /tmp/Meta-Llama-3.1-8B-Instruct/
+  output_dir: /data/nvme3n1p1/adal_workspace/batyr_adal_exp/torchtune/checkpoints
   model_type: LLAMA3
-resume_from_checkpoint: False
+resume_from_checkpoint: True
+save_per_step: 1000
 
 # Fine-tuning arguments
-batch_size: 2
+batch_size: 64
 epochs: 3
 optimizer:
   _component_: bitsandbytes.optim.PagedAdamW8bit
@@ -75,6 +83,9 @@ dtype: bf16
 metric_logger:
   _component_: torchtune.utils.metric_logging.DiskLogger
   log_dir: ${output_dir}
-output_dir: /tmp/full-llama3.1-finetune
+output_dir: /data/nvme3n1p1/adal_workspace/batyr_adal_exp/torchtune/logs
 log_every_n_steps: 1
 log_peak_memory_stats: False
+
+sub_length: 1000
+train_type: base
