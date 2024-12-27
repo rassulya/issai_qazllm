@@ -82,6 +82,8 @@ make run_model DIR=src/benchmarking/utils/download_dataset.py
 
 ### Download Datasets and Models for Training
 
+Make sure you requested access for gated models in [KazLLM Models Collections](https://huggingface.co/collections/issai/issai-kazllm-10-6732d58c81bcaf177442c362).
+
 Set required paths inside of *utils/download_training.py*. Comment out if you don't need either dataset or model
 To download the required datasets for benchmarking, run:
 ```bash
