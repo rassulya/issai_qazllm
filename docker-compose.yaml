@@ -13,7 +13,7 @@ services:
       - TOKENIZERS_PARALLELISM=false
     volumes:
       - ${PWD}:/issai_qazllm
-      - /data/nvme7n1p1/checkpoinst_llama_8B_05122024:/issai_qazllm/models/
+      # - /data/nvme3n1p1/adal_workspace/models/issai_llama_8b:/issai_qazllm/models/issai_llama_8b
     ports:
       - "3434:3434"
     # devices:
