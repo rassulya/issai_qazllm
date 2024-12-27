@@ -1,5 +1,5 @@
 model:
-  path: "issai/LLama-3.1-KazLLM-1.0-8B-AWQ4"
+  path: "issai/LLama-3.1-KazLLM-1.0-8B"
   is_local: False
 
 quant_config:

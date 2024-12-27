@@ -78,7 +78,17 @@ To download the required datasets for benchmarking, run:
 make run_model DIR=src/benchmarking/utils/download_dataset.py
 ```
 ---
-### Get access to Gated datasets and models
+
+
+### Download Datasets and Models for Training
+
+Set required paths inside of *utils/download_training.py*. Comment out if you don't need either dataset or model
+To download the required datasets for benchmarking, run:
+```bash
+make run_model DIR=utils/download_training.py
+```
+---
+
 ### Run Benchmark
 
 ```bash
@@ -96,7 +106,7 @@ make run_model DIR="src/quantization/main.py"
 ```bash
 make run_training
 ```
-2) Setup required configs in *src/training/config_train/* based on your model and train type. You can use default one
+2) Setup required configs in *src/training/config_train/* based on your model and train type. Change dataset and mode paths. You can stick default one.
 3) Go to *src/training*
 4) Run *./start.sh* if you are training 8b and *./start_70b.sh* if 70b model
 
