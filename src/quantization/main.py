@@ -109,9 +109,7 @@ def main():
 
     # Save quantized model and tokenizer
     logger.info("Saving quantized model and tokenizer...")
-    print(model)
     output_path = str(output_path)
-    print(output_path)
     model.save_quantized(output_path)
     tokenizer.save_pretrained(output_path)
     logger.info(f"Quantized model and tokenizer saved to: {output_path}")
