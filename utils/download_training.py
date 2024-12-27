@@ -6,7 +6,7 @@ import yaml
 ROOT_DIR = Path(os.getenv("PROJECT_ROOT", "."))
 CREDENTIALS_PATH = ROOT_DIR / "conf" / "credentials.yaml"
 
-MODELS_DIR = "/models"
+MODELS_DIR = "models"
 os.makedirs(MODELS_DIR, exist_ok=True)
 
 # Apply 777 permissions

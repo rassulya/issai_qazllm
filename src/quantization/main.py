@@ -72,7 +72,7 @@ def main():
     output_path.parent.mkdir(parents=True, exist_ok=True)
     logger.info(f"Quantized model will be saved to: {output_path}")
     # Apply 777 permissions
-    os.system(f"chmod -R 777 {output_path}")
+    os.system(f"chmod -R 777 models")
     print(f"Permissions for {output_path} set to 777 recursively.")
     # Resolve model path
     if model_config["is_local"]:
