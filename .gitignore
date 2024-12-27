@@ -134,7 +134,11 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+#ignore local models and data beside libs in training scripts
 *models*
 data
-
+!src/training/torchtune/data
+!src/training/torchtune/models
+#ignore credentials
 credentials*
+
