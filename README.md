@@ -1,4 +1,4 @@
-# LLM Benchmarking Framework
+# Qaz LLM
 ![image](https://github.com/user-attachments/assets/a0420652-4e7c-483b-a902-ca10ac73b7c8)
 
 Made in Kazakhstan - Қазақстанда жасалған
