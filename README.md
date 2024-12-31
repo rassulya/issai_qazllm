@@ -51,6 +51,9 @@ Made in Kazakhstan - Қазақстанда жасалған
 
 ### Setting credentials
 
+Credentials are required to access datasets and model from huggingface. Make sure firstly you got gated access to models in the [KazLLM collection](https://huggingface.co/collections/issai/issai-kazllm-10-6732d58c81bcaf177442c362)
+Datasets that were used to train models are private. You can access them via token provided. Name of datasets: issai/KazLLM_SFT_Dataset and issai/KazLLM_SFT_Dataset.
+ 
 - Create file  `conf/credentials.yaml`. Include inside your credentials as *hf_token: <your_huggingface_token>* 
 
 ---
