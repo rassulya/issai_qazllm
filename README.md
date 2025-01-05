@@ -113,6 +113,11 @@ make run_training
 4) Run *./start.sh* if you are training 8b and *./start_70b.sh* if 70b model
 
 ### Run UI
+Download models via
+```bash
+make run_model DIR=utils/download_models.py
+```
+Then
 ```bash
 make run_ui
 ```

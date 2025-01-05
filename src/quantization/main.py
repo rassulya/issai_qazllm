@@ -47,11 +47,6 @@ def get_cuda_visible_devices():
     """Parse CUDA_VISIBLE_DEVICES environment variable."""
     return [int(i) for i in os.getenv("NVIDIA_VISIBLE_DEVICES", "").split(",") if i]
 
-def load_kk_calib(dataset_name="akylbekmaxutov/KK_calibration_dataset"):
-    """Load calibration dataset from a configurable source."""
-    logger.info(f"Loading dataset: {dataset_name}")
-    data = load_dataset(dataset_name, split="train")
-    return [text for text in data["text"]]
 
 def main():
     # Load configurations
