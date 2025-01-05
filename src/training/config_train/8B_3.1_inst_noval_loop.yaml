@@ -1,21 +1,21 @@
 # Tokenizer
 tokenizer:
   _component_: torchtune.models.llama3.llama3_tokenizer
-  path: models/LLama-3.1-KazLLM-1.0-8B
-  max_seq_len: 8192
+  path: /issai_qazllm/models/issai_llama_8b
+  max_seq_len: 1024
 
 # Dataset
 dataset:
   _component_: torchtune.datasets.instruct_dataset
   source: json
   split: train
-  data_files: data/LLM_internvl_sft_datasets/english/2024.09.06_instruct_en_benchmarks-arc_154489.json.tar.gz
+  data_files: /issai_qazllm/datasets_tmp/2024.09.09_instruct_tr_benchmarks-hellaswag_632135.json
   template: torchtune.data.AlpacaInstructTemplate
   column_map:
     instruction: instruction
     input: input
     output: output
-  max_seq_len: 8192
+  max_seq_len: 1024
   packed: True
 seed: null
 shuffle: False
@@ -27,12 +27,12 @@ model:
 
 checkpointer:
   _component_: torchtune.utils.FullModelHFCheckpointer
-  checkpoint_dir: issai/LLama-3.1-KazLLM-1.0-8B
+  checkpoint_dir: /issai_qazllm/models/issai_llama_8b
   checkpoint_files: [
-    model-00001-of-00004.safetensors,
-    model-00002-of-00004.safetensors,
-    model-00003-of-00004.safetensors,
-    model-00004-of-00004.safetensors   
+    model-00001-of-00004.safetensors,    
+    model-00002-of-00004.safetensors,    
+    model-00003-of-00004.safetensors,    
+    model-00004-of-00004.safetensors      
   ]
   recipe_checkpoint: null
   output_dir: checkpoints
@@ -40,9 +40,9 @@ checkpointer:
 resume_from_checkpoint: False
 
 # Fine-tuning arguments
-batch_size: 3
+batch_size: 1
 epochs: 1
-save_per_step: 900
+save_per_step: 3
 
 optimizer:
   _component_: torch.optim.AdamW
@@ -67,22 +67,22 @@ dtype: bf16
 
 # Logging
 
-# metric_logger:
-#   _component_: torchtune.utils.metric_logging.DiskLogger
-#   log_dir: ${output_dir}
-# output_dir: logs
-# log_every_n_steps: 1
-# log_peak_memory_stats: False
-
-# enable logging to the built-in WandBLogger
 metric_logger:
-  _component_: torchtune.utils.metric_logging.WandBLogger
-  # the W&B project to log to
-  project: _
-  name: _
-output_dir: /logs
+  _component_: torchtune.utils.metric_logging.DiskLogger
+  log_dir: ${output_dir}
+output_dir: logs
 log_every_n_steps: 1
 log_peak_memory_stats: False
 
-sub_length: 100000
+# enable logging to the built-in WandBLogger
+#metric_logger:
+#  _component_: torchtune.utils.metric_logging.WandBLogger
+  # the W&B project to log to
+#  project: _
+#  name: _
+#output_dir: /logs
+#log_every_n_steps: 1
+#log_peak_memory_stats: False
+
+sub_length: 10000
 train_type: instruct

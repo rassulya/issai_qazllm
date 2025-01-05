@@ -13,7 +13,7 @@ WORKDIR /issai_qazllm
 
 # COPY src/training/requirements.txt ./requirements.txt
 
-COPY requirements.txt ./requirements.txt
+COPY src/training/requirements.txt ./requirements.txt
 RUN pip install -r requirements.txt
 
 RUN chmod -R 777 /issai_qazllm
