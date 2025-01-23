@@ -7,6 +7,8 @@ import pandas as pd
 from huggingface_hub import login
 from evaluate import load
 from vllm import LLM
+import argparse
+
 
 from utils.utils import load_dataset, evaluate_model, save_results, save_accuracy_metrics, calculate_pass_at_k
 
@@ -17,7 +19,7 @@ logging.basicConfig(
 )
 
 # Constants
-ROOT_DIR = Path(os.getenv("PROJECT_ROOT", "."))
+ROOT_DIR = Path(__file__).resolve().parents[2] # Use absolute path
 CONFIG_PATH = ROOT_DIR / "conf" / "parameters_benchmark.yaml"
 CREDENTIALS_PATH = ROOT_DIR / "conf" / "credentials.yaml"
 OUTPUT_DIR = ROOT_DIR / "data" / "evaluation"
@@ -32,7 +34,16 @@ DEFAULT_MAX_TOKENS = {
     "hellaswag": 15,
     "winogrande": 15,
 }
-
+def parse_args():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(description="Run model benchmarks")
+    parser.add_argument(
+        "--config",
+        type=str,
+        default=str(CONFIG_PATH),  # Changed from DEFAULT_CONFIG_PATH to CONFIG_PATH
+        help="Path to configuration YAML file"
+    )
+    return parser.parse_args()
 
 def load_config(config_path: Path) -> Dict:
     """Load configuration parameters from a YAML file."""
@@ -107,15 +118,25 @@ def evaluate_benchmark(
 def main():
     """Main function to execute the benchmarking workflow."""
     try:
+        # Create directories at startup
+        DATA_DIR = ROOT_DIR / "data"
+        EVAL_DIR = DATA_DIR / "evaluation"
+        
+        print(f"Creating data directory at: {DATA_DIR}")
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        print(f"Creating evaluation directory at: {EVAL_DIR}")
+        EVAL_DIR.mkdir(parents=True, exist_ok=True)
+        
+        # Parse command line arguments
+        args = parse_args()
+        
         # Load configurations and credentials
-        config = load_config(CONFIG_PATH)
+        config = load_config(Path(args.config))
+        hf_token = load_credentials(CREDENTIALS_PATH) if IS_CREDENTIALS else None
         
         if IS_CREDENTIALS:
-            hf_token = load_credentials(CREDENTIALS_PATH)
             login(hf_token)
-        # Prepare directories
-        os.makedirs(OUTPUT_DIR, exist_ok=True)
-
+            
         # Initialize LLM
         llm = initialize_llm(
             model_path=config["model_path"],
@@ -141,13 +162,12 @@ def main():
             )
             all_accuracy_metrics.update(accuracy_metrics)
 
-        # Save overall accuracy metrics
-        save_accuracy_metrics(all_accuracy_metrics, config["model_name"], OUTPUT_DIR)
+        # Save overall accuracy metrics both locally and to HF Hub
+        save_accuracy_metrics(all_accuracy_metrics, config["model_name"])
         logging.info("All evaluations completed successfully.")
     except Exception as e:
         logging.error(f"Error in main execution: {e}")
         raise
-
 
 if __name__ == "__main__":
     main()

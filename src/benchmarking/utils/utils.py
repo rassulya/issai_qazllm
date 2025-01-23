@@ -1,3 +1,4 @@
+import yaml
 import re
 import random
 import pandas as pd
@@ -5,7 +6,7 @@ import json
 import numpy as np
 import ast
 import os
-
+from huggingface_hub import HfApi
 from typing import List, Dict
 from tqdm import tqdm
 from torch.utils.data import DataLoader
@@ -186,7 +187,19 @@ def evaluate_math_answer(result: str, answers: List, lang: str = 'en') -> int:
 
 def load_dataset(file_path: str, data_portion: int = 100) -> List[Dict]:
     try:
-        df = pd.read_csv(file_path, encoding='utf-8')
+        # Try v2 first
+        v2_path = file_path.replace('.csv', '_v2.csv')
+        
+        if os.path.exists(v2_path):
+            actual_path = v2_path
+            logging.info(f"Using v2 dataset: {v2_path}")
+        elif os.path.exists(file_path):
+            actual_path = file_path
+            logging.info(f"Using original dataset: {file_path}")
+        else:
+            raise FileNotFoundError(f"Dataset file not found at either {v2_path} or {file_path}")
+            
+        df = pd.read_csv(actual_path, encoding='utf-8')
         
         data = df.to_dict('records')
         
@@ -198,7 +211,7 @@ def load_dataset(file_path: str, data_portion: int = 100) -> List[Dict]:
     except Exception as e:
         logging.error(f"Error loading dataset {file_path}: {str(e)}")
         raise
-
+        
 def evaluate_model(llm: LLM, dataset: List[Dict], benchmark: str, lang: str, max_tokens: int, batch_size: int = 32) -> List[Dict]:
     eval_dataset = EvaluationDataset(dataset, benchmark, lang)
     dataloader = DataLoader(eval_dataset, batch_size=batch_size, shuffle=False)
@@ -329,11 +342,15 @@ def calculate_pass_at_k(df: pd.DataFrame, df_generated: pd.DataFrame) -> float:
 
     return np.mean(pass_k)
 
+ROOT_DIR = Path(__file__).resolve().parents[3]
+
 def save_results(results: List[Dict], benchmark: str, model_name: str):
     try:
-        output_path = Path("data/evaluation") 
-        output_path.parent.resolve().mkdir(parents=True, exist_ok=True)
-        output_file = os.path.join(output_path, f"{benchmark}_generated_{model_name}.csv")
+        # Use absolute path
+        output_path = base_dir / "data" / "evaluation"
+        output_path.mkdir(parents=True, exist_ok=True)  # Changed from .parent.resolve()
+        
+        output_file = output_path / f"{benchmark}_generated_{model_name}.csv"
         
         df = pd.DataFrame(results)
         
@@ -357,17 +374,25 @@ def save_results(results: List[Dict], benchmark: str, model_name: str):
         df = df[columns]
         df.to_csv(output_file, index=False, encoding='utf-8')
         logging.info(f"Results saved to {output_file}")
+        logging.info(f"File exists check: {output_file.exists()}")  # Added verification
         
     except Exception as e:
         logging.error(f"Error saving results: {str(e)}")
         raise
 
-def save_accuracy_metrics(accuracy_results: Dict, model_name: str, output_dir: str = "data/evaluation"):
+def save_accuracy_metrics(accuracy_results: Dict, model_name: str, output_dir: str = None):
     try:
-        os.makedirs(output_dir, exist_ok=True)
-        output_file = os.path.join(output_dir, f"accuracy_metrics_{model_name}.json")
+        credentials_path = ROOT_DIR / "conf" / "credentials.yaml"
+        with open(credentials_path, 'r') as f:
+            credentials = yaml.safe_load(f)
+            hf_token = credentials.get('hf_token')
+            
+        output_path = ROOT_DIR / "data" / "evaluation"
+        output_path.mkdir(parents=True, exist_ok=True)
         
-        # Restructure the results according to the new format
+        output_file = output_path / f"accuracy_metrics_{model_name}.json"
+        
+        # Restructure the results
         formatted_results = {
             "model_name": model_name,
             "results": {
@@ -382,11 +407,40 @@ def save_accuracy_metrics(accuracy_results: Dict, model_name: str, output_dir: s
             benchmark, lang = key.split('_')
             formatted_results["results"][lang][benchmark] = {"acc": value}
         
-        # Save to file
+        # Save locally
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(formatted_results, f, indent=2)
-        logging.info(f"Accuracy metrics saved to {output_file}")
+        logging.info(f"Accuracy metrics saved locally to {output_file}")
         
+        # Upload to HF Hub
+        try:
+            repo_id = "issai/llm_bench_results"
+            results_folder = f"results_{model_name}"
+            path_in_repo = f"{results_folder}/accuracy_metrics_{model_name}.json"
+            
+            api = HfApi()
+            if not hf_token:
+                raise ValueError("No HuggingFace token found in credentials.yaml")
+            
+            api.upload_file(
+                path_or_fileobj=str(output_file),
+                path_in_repo=path_in_repo,
+                repo_id=repo_id,
+                repo_type="dataset",
+                token=hf_token
+            )
+            
+            # Verify upload
+            try:
+                api.list_repo_files(repo_id=repo_id, repo_type="dataset")
+                logging.info("Successfully verified upload to HuggingFace")
+                logging.info(f"Accuracy metrics uploaded to {repo_id}/{path_in_repo}")
+            except Exception as e:
+                logging.error(f"Error verifying upload: {str(e)}")
+                
+        except Exception as e:
+            logging.error(f"Error uploading to HF Hub: {str(e)}")
+            
     except Exception as e:
         logging.error(f"Error saving accuracy metrics: {str(e)}")
-        raise
+        raise Exception(f"Error saving accuracy metrics: {str(e)}")

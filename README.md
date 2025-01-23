@@ -125,3 +125,24 @@ Then
 make run_ui
 ```
 wait until model server is deployed
+
+
+### Run Benchmarks
+
+#### Single Benchmark
+Run a benchmark for one model checkpoint:
+
+```bash
+./scripts/run_single_benchmark.sh
+```
+
+#### Sequential Benchmarks
+Run benchmarks for multiple checkpoints:
+
+```bash
+./scripts/run_sequential_benchmarks.sh <model_directory> [starting_epoch]
+```
+
+Example:
+```bash
+./scripts/run_sequential_benchmarks.sh /scratch/batyr_arystanbekov/output/qwen2_5_72B 3000

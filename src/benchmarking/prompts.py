@@ -264,14 +264,9 @@ Steps:
 {row['hints']}
 Return your answer as a single number.
 Answer: """,
-        'kk': f"""You are intelligent assistant in solving mathematical questions.
-You are given steps which are intermediate questions to calculate the final answer. Solve this questions first, and then calculate the final answer.
-Give the exact answer only without an explanation.
-Do not show me the intermediate calculations, give only the final answer.
-Do not generate anything else, only the final answer is needed.
-I need only the the number that comes after нақты жауап.
+        'kk': f"""Сіз арифметикалық есептерді шешуде көмектесетін ақылды көмекшісіз. Сізге берілген қадамдар - бұл соңғы жауапты есептеу үшін аралық сұрақтар. Бірінші бұл сұрақтарды шешіңіз, содан кейін соңғы жауапты есептеңіз. Маған соңғы жауапты беріңіз
 
-Here are some example problems and their solutions:
+Мысалы, міне, кейбір есептер мен олардың шешімдері:
 
 {get_math_examples('kk')}
 
